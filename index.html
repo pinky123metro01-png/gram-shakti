@@ -3,59 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ग्राम शक्ति - Firebase Powered</title>
+    <title>ग्राम शक्ति - असली डेटा पोर्टल</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        .state-card { 
+            height: 180px; border-radius: 20px; overflow: hidden; 
+            position: relative; background-size: cover; background-position: center;
+            border: 4px solid white; transition: 0.3s;
+        }
+        .state-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); }
+        .hidden { display: none !important; }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100 font-sans">
 
     <header class="bg-[#FF5722] text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-50">
-        <h1 class="text-xl font-black uppercase">ग्राम <span id="admin-gate" class="cursor-pointer">शक्ति</span></h1>
-        <div id="db-status" class="bg-white text-orange-600 px-2 py-1 rounded-full text-[10px] font-bold italic">Connecting...</div>
+        <h1 class="text-xl font-black italic tracking-tighter">ग्राम <span id="admin-gate" class="cursor-pointer">शक्ति</span></h1>
+        <div id="db-status" class="bg-white text-orange-600 px-2 py-1 rounded-full text-[10px] font-bold">Connecting...</div>
     </header>
 
-    <div id="main" class="max-w-md mx-auto p-4 min-h-screen">
-        <div id="screen-states">
-            <div id="state-grid" class="grid grid-cols-1 gap-4"></div>
-        </div>
+    <div id="app" class="max-w-md mx-auto p-4 min-h-screen">
         
+        <div id="screen-states">
+            <h2 class="text-gray-500 font-bold mb-4 uppercase text-xs tracking-widest">अपना राज्य चुनें</h2>
+            <div id="state-grid" class="grid grid-cols-1 gap-4">
+                </div>
         </div>
+
+        <div id="screen-districts" class="hidden">
+            <button onclick="showScreen('states')" class="mb-4 text-orange-600 font-bold flex items-center">❮ वापस लौटें</button>
+            <h2 id="dist-title" class="text-xl font-bold mb-4 text-gray-800">जिलें</h2>
+            <div id="dist-list" class="grid grid-cols-1 gap-2 pb-10"></div>
+        </div>
+
+        <div id="screen-reg" class="hidden">
+            <button onclick="showScreen('districts')" class="mb-4 text-orange-600 font-bold">❮ वापस</button>
+            <div class="bg-white p-6 rounded-3xl shadow-2xl border border-orange-100">
+                <h3 class="text-xl font-black mb-6 text-orange-600 uppercase border-b pb-2">नया पंजीकरण</h3>
+                <label class="text-[10px] font-bold text-gray-400 uppercase">पूरा नाम</label>
+                <input type="text" id="w-name" placeholder="नाम लिखें" class="w-full border-2 p-3 rounded-xl mb-4 outline-none focus:border-orange-500">
+                
+                <label class="text-[10px] font-bold text-gray-400 uppercase">मोबाइल नंबर</label>
+                <input type="number" id="w-phone" placeholder="99999 XXXXX" class="w-full border-2 p-3 rounded-xl mb-4 outline-none">
+                
+                <label class="text-[10px] font-bold text-gray-400 uppercase">गाँव / पंचायत</label>
+                <input type="text" id="v-name" placeholder="अपने गाँव का नाम लिखें" class="w-full border-2 p-3 rounded-xl mb-8 bg-gray-50">
+                
+                <button onclick="submitData()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl active:scale-95 transition">क्लाउड में सेव करें ☁️</button>
+            </div>
+        </div>
+
+        <div id="screen-admin" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-black text-red-600 uppercase">Master Admin</h2>
+                <button onclick="showScreen('states')" class="text-xs bg-gray-200 px-3 py-1 rounded">बंद करें</button>
+            </div>
+            <div id="admin-data-list" class="space-y-3 pb-10"></div>
+        </div>
+
+    </div>
 
     <script>
-        // 1. अपनी FIREBASE ID यहाँ डालें
+        // 1. FIREBASE CONFIG (इसमें अपनी ID डालें रवि भाई)
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSy...", 
+            databaseURL: "https://your-project-id.firebaseio.com",
+            projectId: "your-project-id",
+            appId: "1:..."
         };
 
-        // Firebase को शुरू करना
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        document.getElementById('db-status').innerText = "Cloud Online ☁️";
-
-        // डेटा सेव करने का फंक्शन (Firebase Database में)
-        function saveToFirebase(workerData) {
-            const newWorkerRef = database.ref('workers').push();
-            newWorkerRef.set(workerData)
-                .then(() => alert("Cloud पर सेव हो गया!"))
-                .catch((err) => alert("एरर: " + err.message));
+        // Firebase Initialize
+        try {
+            firebase.initializeApp(firebaseConfig);
+            var db = firebase.database();
+            document.getElementById('db-status').innerText = "Cloud Online ✅";
+        } catch(e) {
+            document.getElementById('db-status').innerText = "Offline Mode ⚠️";
         }
 
-        // एडमिन पैनल (Vikas0627) में डेटा खींचना
-        function loadFromFirebase() {
-            database.ref('workers').on('value', (snapshot) => {
-                const data = snapshot.val();
-                // यहाँ से डेटा एडमिन पैनल की टेबल में दिखेगा
+        const states = [
+            { name: 'उत्तर प्रदेश', id: 34, img: 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=600' },
+            { name: 'राजस्थान', id: 29, img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=600' },
+            { name: 'बिहार', id: 5, img: 'https://images.unsplash.com/photo-1593181629936-11c609b8db9b?q=80&w=600' },
+            { name: 'हरियाणा', id: 13, img: 'https://images.unsplash.com/photo-1622359265107-1c46927a76c7?q=80&w=600' }
+        ];
+
+        // Load States
+        const grid = document.getElementById('state-grid');
+        states.forEach(s => {
+            grid.innerHTML += `
+                <div onclick="fetchDistricts(${s.id}, '${s.name}')" class="state-card shadow-lg" style="background-image:url('${s.img}')">
+                    <div class="overlay"></div>
+                    <span class="absolute bottom-4 left-4 text-white text-xl font-black z-10 uppercase italic tracking-tighter">${s.name}</span>
+                </div>
+            `;
+        });
+
+        // 2. Fetch Real Districts
+        async function fetchDistricts(sId, sName) {
+            showScreen('districts');
+            const list = document.getElementById('dist-list');
+            const title = document.getElementById('dist-title');
+            title.innerText = `${sName}: जिलें लोड हो रहे हैं...`;
+            list.innerHTML = `<div class='p-10 text-center animate-pulse text-gray-400'>डेटाबेस से जुड़ रहे हैं...</div>`;
+
+            try {
+                const res = await fetch(`https://cdn-api.co-vin.in/api/v2/admin/location/districts/${sId}`);
+                const data = await res.json();
+                list.innerHTML = "";
+                title.innerText = `${sName} के असली जिले`;
+                data.districts.forEach(d => {
+                    list.innerHTML += `<button onclick="showScreen('reg')" class="bg-white p-4 rounded-2xl shadow-sm text-left border-l-8 border-orange-500 font-bold active:bg-orange-50 transition">${d.district_name}</button>`;
+                });
+            } catch (err) {
+                title.innerText = "ऑफलाइन मोड";
+                list.innerHTML = `<button onclick="showScreen('reg')" class="p-5 bg-white rounded-2xl shadow font-bold text-orange-600">सीधे आगे बढ़ें (गाँव भरें)</button>`;
+            }
+        }
+
+        // 3. Submit to Firebase
+        function submitData() {
+            const name = document.getElementById('w-name').value;
+            const phone = document.getElementById('w-phone').value;
+            const village = document.getElementById('v-name').value;
+
+            if(!name || !phone) return alert("नाम और नंबर जरूरी हैं!");
+
+            const workerData = { name, phone, village, time: Date.now() };
+
+            if(db) {
+                db.ref('workers').push(workerData)
+                .then(() => { alert("सफलतापूर्वक क्लाउड में सेव हुआ!"); showScreen('states'); })
+                .catch(e => alert("Error: " + e.message));
+            } else {
+                alert("Firebase कनेक्ट नहीं है, डेटा लोकल सेव हुआ।");
+                showScreen('states');
+            }
+        }
+
+        // Admin Access Logic (Vikas0627)
+        let tapCount = 0;
+        document.getElementById('admin-gate').onclick = () => {
+            tapCount++;
+            if(tapCount === 5) {
+                if(prompt("ADMIN PASSWORD:") === "Vikas0627") {
+                    showAdmin();
+                }
+                tapCount = 0;
+            }
+        };
+
+        function showAdmin() {
+            showScreen('admin');
+            const list = document.getElementById('admin-data-list');
+            list.innerHTML = "लोड हो रहा है...";
+            
+            db.ref('workers').on('value', (snap) => {
+                const val = snap.val();
+                list.innerHTML = "";
+                for(let id in val) {
+                    list.innerHTML += `
+                        <div class="bg-white p-4 rounded-2xl shadow border-r-4 border-red-500 flex justify-between items-center">
+                            <div><b class="text-gray-800">${val[id].name}</b><br><small class="text-blue-500 font-bold">${val[id].phone}</small></div>
+                            <button onclick="deleteEntry('${id}')" class="text-red-500 font-black text-xs bg-red-50 px-3 py-1 rounded-full">DELETE</button>
+                        </div>`;
+                }
             });
         }
 
-        // पासवर्ड और बाकी लॉजिक पहले जैसा ही रहेगा...
+        function deleteEntry(id) {
+            if(confirm("डिलीट करें?")) db.ref('workers/' + id).remove();
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById('screen-' + id).classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
     </script>
 </body>
 </html>
