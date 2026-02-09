@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>Gram Shakti</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+    header {
+      background: #2e7d32;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 15px;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header id="title">GRAM SHAKTI</header>
+
+<div class="container" id="home">
+  <div class="card" onclick="openForm('उत्तर प्रदेश')">उत्तर प्रदेश</div>
+  <div class="card" onclick="openForm('बिहार')">बिहार</div>
+  <div class="card" onclick="openForm('मध्य प्रदेश')">मध्य प्रदेश</div>
+  <div class="card" onclick="openForm('राजस्थान')">राजस्थान</div>
+</div>
+
+<div class="container hidden" id="formBox">
+  <h3 id="stateName"></h3>
+  <input type="text" id="name" placeholder="पूरा नाम">
+  <input type="tel" id="mobile" placeholder="मोबाइल नंबर">
+  <button onclick="submitForm()">रजिस्टर करें</button>
+</div>
+
+<div class="container hidden" id="admin">
+  <h3>Admin Panel</h3>
+  <div id="data"></div>
+</div>
+
+<script>
+  // 🔥 Firebase Config (आपका)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuvev3-jwZwQu0_fHYyv2E2ovLny4LhRQ",
+    authDomain: "gram-shakti-b135a.firebaseapp.com",
+    projectId: "gram-shakti-b135a",
+    storageBucket: "gram-shakti-b135a.firebasestorage.app",
+    messagingSenderId: "340909973482",
+    appId: "1:340909973482:web:c562cb3dd591b78de21c93"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let selectedState = "";
+  let adminTap = 0;
+
+  function openForm(state) {
+    selectedState = state;
+    document.getElementById("stateName").innerText = state;
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("formBox").classList.remove("hidden");
+  }
+
+  function submitForm() {
+    const name = document.getElementById("name").value;
+    const mobile = document.getElementById("mobile").value;
+
+    if (name === "" || mobile === "") {
+      alert("सभी जानकारी भरें");
+      return;
+    }
+
+    db.collection("registrations").add({
+      name: name,
+      mobile: mobile,
+      state: selectedState,
+      time: new Date()
+    }).then(() => {
+      alert("रजिस्ट्रेशन सफल हुआ");
+      location.reload();
+    });
+  }
+
+  document.getElementById("title").onclick = function () {
+    adminTap++;
+    if (adminTap === 5) {
+      showAdmin();
+    }
+  };
+
+  function showAdmin() {
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("formBox").classList.add("hidden");
+    document.getElementById("admin").classList.remove("hidden");
+
+    db.collection("registrations").get().then(snapshot => {
+      let html = "";
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        html += `<div class="card">
+          <b>${d.name}</b><br>
+          ${d.mobile}<br>
+          ${d.state}
+        </div>`;
+      });
+      document.getElementById("data").innerHTML = html;
+    });
+  }
+</script>
+
+</body>
+</html>
