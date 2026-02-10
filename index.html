@@ -26,7 +26,7 @@
 
     <header class="text-center py-10">
         <h1 class="text-6xl font-black text-orange-600 italic tracking-tight">
-            ग्राम शक्<span id="admin-trigger" class="cursor-pointer">ति</span>
+            ग्राम <span id="admin-trigger" class="cursor-pointer">श</span>क्ति
         </h1>
         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[5px] mt-2">
             DIGITAL VILLAGE NETWORK
@@ -43,9 +43,9 @@
 
             <div class="card bg-orange-600 text-white p-8">
                 <div class="space-y-4 text-sm">
-                    <p>✅ <b>आत्मनिर्भर गाँव:</b> सीधे वर्कर से संपर्क।</p>
-                    <p>✅ <b>सुरक्षा:</b> गलत लोगों की पहचान।</p>
-                    <p>✅ <b>डिजिटल इंडिया:</b> गाँव का हुनर अब ऑनलाइन।</p>
+                    <p>✅ <b>Aatmanirbhar Gaon:</b> Seedhe worker se sampark.</p>
+                    <p>✅ <b>Suraksha:</b> Galat logon ki pehchan.</p>
+                    <p>✅ <b>Digital India:</b> Gaon ka hunar ab online.</p>
                 </div>
                 <button onclick="startFlow()" class="mt-10 bg-white text-orange-600 btn-main">
                     रजिस्ट्रेशन शुरू करें ❯
@@ -58,98 +58,92 @@
             
             <div id="step-1">
                 <select id="sState" onchange="loadDistricts()" class="input-style">
-                    <option value="">-- राज्य चुनें --</option>
-                    <option value="9">उत्तर प्रदेश</option>
-                    <option value="8">राजस्थान</option>
-                    <option value="6">हरियाणा</option>
-                    <option value="10">बिहार</option>
-                    <option value="23">मध्य प्रदेश</option>
-                    <option value="27">महाराष्ट्र</option>
-                    <option value="24">गुजरात</option>
-                    <option value="3">पंजाब</option>
-                    <option value="5">उत्तराखंड</option>
-                    <option value="22">छत्तीसगढ़</option>
+                    <option value="">-- Rajya Chune --</option>
+                    <option value="9">Uttar Pradesh</option>
+                    <option value="8">Rajasthan</option>
+                    <option value="6">Haryana</option>
+                    <option value="10">Bihar</option>
+                    <option value="23">Madhya Pradesh</option>
+                    <option value="27">Maharashtra</option>
+                    <option value="24">Gujarat</option>
+                    <option value="3">Punjab</option>
+                    <option value="5">Uttarakhand</option>
+                    <option value="22">Chhattisgarh</option>
                 </select>
                 <select id="sDist" class="input-style hidden" onchange="nextStep(2)"></select>
             </div>
 
             <div id="step-2" class="hidden">
-                <input id="uPanchayat" placeholder="अपनी पंचायत का नाम" class="input-style">
-                <input id="uVillage" placeholder="अपने गाँव का नाम" class="input-style">
-                <button onclick="nextStep(3)" class="btn-main">अगला स्टेप ❯</button>
+                <input id="uPanchayat" placeholder="Panchayat ka naam" class="input-style">
+                <input id="uVillage" placeholder="Gaon ka naam" class="input-style">
+                <button onclick="nextStep(3)" class="btn-main">Agla Step ❯</button>
             </div>
 
             <div id="step-3" class="hidden">
-                <input id="uName" placeholder="वर्कर का नाम" class="input-style">
-                <input id="uPhone" type="number" placeholder="मोबाइल नंबर" class="input-style">
+                <input id="uName" placeholder="Worker ka naam" class="input-style">
+                <input id="uPhone" type="number" placeholder="Mobile Number" class="input-style">
                 <select id="uWork" class="input-style">
-                    <option value="">काम का प्रकार चुनें</option>
-                    <option value="Mistri">राजमिस्त्री</option>
-                    <option value="Plumber">प्लंबर</option>
-                    <option value="Electrician">इलेक्ट्रीशियन</option>
-                    <option value="Other">अन्य</option>
+                    <option value="">Kaam chune</option>
+                    <option value="Mistri">Rajmistri</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Other">Other</option>
                 </select>
-                <button onclick="finalSubmit()" class="btn-main">सबमिट करें ✅</button>
+                <button onclick="finalSubmit()" class="btn-main">Submit Karein ✅</button>
             </div>
         </div>
 
     </main>
 
     <script>
-        // होम स्क्रीन से रजिस्ट्रेशन शुरू करना
         function startFlow() {
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('reg-flow').classList.remove('hidden');
         }
 
-        // जिलों को लोड करना
         async function loadDistricts() {
             const sId = document.getElementById('sState').value;
             const dSel = document.getElementById('sDist');
             if(!sId) return;
-
             dSel.classList.remove('hidden');
-            dSel.innerHTML = '<option>लोड हो रहा है...</option>';
-
+            dSel.innerHTML = '<option>Loading...</option>';
             const res = await fetch(`https://cdn-api.co-vin.in/api/v2/admin/location/districts/${sId}`);
             const data = await res.json();
-            
-            dSel.innerHTML = '<option value="">-- जिला चुनें --</option>';
+            dSel.innerHTML = '<option value="">-- Jila Chune --</option>';
             data.districts.forEach(d => {
                 dSel.innerHTML += `<option value="${d.district_name}">${d.district_name}</option>`;
             });
         }
 
-        // स्टेप्स बदलना
         function nextStep(step) {
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.add('hidden');
             document.getElementById('step-3').classList.add('hidden');
-            
             document.getElementById('step-' + step).classList.remove('hidden');
-            document.getElementById('step-title').innerText = "स्टेप " + step + ": आगे की जानकारी भरें";
+            document.getElementById('step-title').innerText = "Step " + step + ": Jankari bharein";
         }
 
-        // फाइनल सबमिट (Firebase से जोड़ें)
         function finalSubmit() {
             const name = document.getElementById('uName').value;
             if(name) {
-                alert("बधाई हो " + name + "! आपका पंजीकरण ग्राम शक्ति में हो गया है।");
+                alert("Badhai ho " + name + "! Registration safal raha.");
                 location.reload();
             } else {
-                alert("कृपया पूरी जानकारी भरें");
+                alert("Poori jankari bharein");
             }
         }
 
-        // 'ति' के पीछे छिपा एडमिन पैनल (5 क्लिक पर खुलेगा)
+        // 'श' ke peeche hidden Admin (5 clicks)
         let clicks = 0;
         document.getElementById('admin-trigger').onclick = () => {
             clicks++;
             if(clicks === 5) {
-                let pass = prompt("एडमिन सुरक्षा कोड डालें:");
-                if(pass === "Vikas0627") {
-                    alert("एडमिन पैनल खुल रहा है...");
-                    // यहाँ अपने एडमिन पेज का लिंक डाल सकते हैं
+                let pass = prompt("Admin Password Dalein:");
+                if(pass === "11332244") {
+                    alert("Admin Panel khul raha hai...");
+                    // Yahan Admin link add kar sakte hain
+                } else {
+                    alert("Galat Password!");
                 }
                 clicks = 0;
             }
