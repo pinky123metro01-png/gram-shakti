@@ -10,95 +10,66 @@
 
 <style>
 body { font-family: 'Hind', sans-serif; }
-.state-card {
-    height: 125px;
-    border-radius: 14px;
-    overflow: hidden;
-    position: relative;
+.state-card{
+    height:110px;
+    border-radius:14px;
+    padding:12px;
+    display:flex;
+    align-items:flex-end;
+    font-weight:800;
+    color:white;
+    cursor:pointer;
+    transition:transform .15s ease;
 }
-.overlay {
-    position:absolute;
-    inset:0;
-    background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+.state-card:active{
+    transform:scale(0.95);
 }
 </style>
 </head>
 
-<body class="max-w-md mx-auto bg-white min-h-screen">
+<body class="max-w-md mx-auto min-h-screen bg-gray-50 p-4 flex flex-col">
 
-<main class="p-5 grid grid-cols-2 gap-4">
+<!-- HEADER -->
+<header class="mb-4">
+    <h2 class="text-2xl font-black">Select State</h2>
+    <p class="text-sm text-gray-500">राज्य चुनें, फिर जिले दिखेंगे</p>
+</header>
 
-<!-- BIHAR -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Bihar_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Bihar</span>
+<!-- STATES -->
+<div class="grid grid-cols-2 gap-4 flex-grow">
+
+<div class="state-card bg-orange-600" onclick="selectState('Bihar')">Bihar</div>
+<div class="state-card bg-green-600" onclick="selectState('Madhya Pradesh')">Madhya Pradesh</div>
+<div class="state-card bg-blue-600" onclick="selectState('Gujarat')">Gujarat</div>
+<div class="state-card bg-purple-600" onclick="selectState('West Bengal')">West Bengal</div>
+<div class="state-card bg-pink-600" onclick="selectState('Karnataka')">Karnataka</div>
+<div class="state-card bg-indigo-600" onclick="selectState('Uttar Pradesh')">Uttar Pradesh</div>
+<div class="state-card bg-yellow-600 text-black" onclick="selectState('Rajasthan')">Rajasthan</div>
+<div class="state-card bg-red-600" onclick="selectState('Punjab')">Punjab</div>
+<div class="state-card bg-teal-600" onclick="selectState('Maharashtra')">Maharashtra</div>
+<div class="state-card bg-gray-700" onclick="selectState('Haryana')">Haryana</div>
+
 </div>
 
-<!-- MP -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Madhya_Pradesh_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Madhya Pradesh</span>
-</div>
+<!-- BOTTOM NAV (SAFE SIMPLE) -->
+<nav class="mt-4 bg-white rounded-xl shadow flex justify-around py-3">
+    <span class="text-orange-600 font-bold text-sm">States</span>
+    <span class="text-gray-400 text-sm">Workers</span>
+    <span class="text-gray-400 text-sm">Profile</span>
+</nav>
 
-<!-- GUJARAT -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Gujarat_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Gujarat</span>
-</div>
+<script>
+function selectState(stateName){
+    // state save (future firebase / session use)
+    localStorage.setItem("selectedState", stateName);
 
-<!-- WEST BENGAL -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/0/0a/West_Bengal_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">West Bengal</span>
-</div>
+    // अभी demo के लिए
+    alert("Selected State: " + stateName);
 
-<!-- KARNATAKA -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Karnataka_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Karnataka</span>
-</div>
-
-<!-- UP -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Uttar_Pradesh_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Uttar Pradesh</span>
-</div>
-
-<!-- RAJASTHAN -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Rajasthan_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Rajasthan</span>
-</div>
-
-<!-- PUNJAB -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Punjab_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Punjab</span>
-</div>
-
-<!-- MAHARASHTRA -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Maharashtra_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Maharashtra</span>
-</div>
-
-<!-- HARYANA -->
-<div class="state-card">
-<img src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Haryana_Village.jpg" class="w-full h-full object-cover">
-<div class="overlay"></div>
-<span class="absolute bottom-2 left-2 text-white font-bold text-xs">Haryana</span>
-</div>
-
-</main>
+    // आगे district page
+    // window.location.href = "district.html?state=" + stateName;
+}
+</script>
 
 </body>
 </html>
