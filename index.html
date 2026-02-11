@@ -2,140 +2,201 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
+<title>Gram Shakti</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gram Shakti | Master Setup</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- 🔴 FIREBASE SDK -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body{font-family:Hind,sans-serif}
-.card{border-radius:14px;padding:16px;font-weight:800}
+body{
+  font-family: Arial;
+  margin:0;
+  background:#f4f4f4;
+}
+header{
+  background:#ff6a00;
+  color:white;
+  padding:15px;
+  font-size:20px;
+}
+.container{
+  padding:15px;
+}
+.card{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.1);
+}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#ff6a00;
+  color:white;
+  font-size:16px;
+  margin-top:10px;
+}
+input, select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+}
+.worker-card{
+  border-left:5px solid green;
+}
 </style>
 </head>
 
-<body class="max-w-md mx-auto min-h-screen bg-gray-50 p-4">
+<body>
 
-<h2 class="text-2xl font-black mb-4">Gram Shakti Setup</h2>
+<header>Gram Shakti</header>
 
-<!-- STEP DISPLAY -->
-<div id="stepTitle" class="font-bold mb-3 text-orange-600">
-राज्य चुनें
-</div>
-
-<!-- CONTENT -->
-<div id="content"></div>
+<div class="container" id="app"></div>
 
 <script>
-/* =====================================================
- 🔴🔴🔴 यहाँ अपनी Firebase की DETAILS PASTE करें 🔴🔴🔴
- Firebase Console → Project Settings → Web App
-===================================================== */
+/* 🔴 यहाँ अपनी Firebase Configuration डालें */
+c// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "🔴 यहाँ अपनी API KEY डालें",
-  authDomain: "🔴 यहाँ authDomain डालें",
-  databaseURL: "🔴 यहाँ databaseURL डालें",
-  projectId: "🔴 यहाँ projectId डालें"
+  apiKey: "AIzaSyCuvev3-jwZwQu0_fHYyv2E2ovLny4LhRQ",
+  authDomain: "gram-shakti-b135a.firebaseapp.com",
+  projectId: "gram-shakti-b135a",
+  storageBucket: "gram-shakti-b135a.firebasestorage.app",
+  messagingSenderId: "340909973482",
+  appId: "1:340909973482:web:c562cb3dd591b78de21c93"
 };
 
-/* ===================================================== */
-
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* GLOBAL DATA */
-let currentState = "";
-let currentDistrict = "";
-let currentPanchayat = "";
-let currentVillage = "";
+let selectedPath = {};
 
-/* STATES LIST (ALL INDIA) */
-const states = [
-"Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
-"Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
-"Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
-"Meghalaya","Mizoram","Nagaland","Odisha","Punjab",
-"Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
-"Uttar Pradesh","Uttarakhand","West Bengal"
-];
+loadState();
 
-/* LOAD STATES */
-function loadStates(){
-  stepTitle.innerText="राज्य चुनें";
-  content.innerHTML="";
-  states.forEach(state=>{
-    const div=document.createElement("div");
-    div.className="card bg-orange-500 text-white mb-3";
-    div.innerText=state;
-    div.onclick=()=>{currentState=state; loadDistrict();}
-    content.appendChild(div);
-  });
+/* ---------- STATE ---------- */
+function loadState(){
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <h3>राज्य चुनें</h3>
+    <input id="state" placeholder="State का नाम लिखें">
+    <button onclick="saveState()">Next</button>
+  </div>`;
+}
+function saveState(){
+  selectedPath.state = state.value;
+  loadDistrict();
 }
 
-/* DISTRICT */
+/* ---------- DISTRICT ---------- */
 function loadDistrict(){
-  stepTitle.innerText=currentState+" → जिला जोड़ें";
-  content.innerHTML=`
-  <input id="districtInput" class="w-full p-3 border rounded mb-3" placeholder="जिले का नाम">
-  <button class="w-full bg-green-600 text-white p-3 rounded" onclick="saveDistrict()">Save District</button>
-  `;
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <h3>जिला जोड़ें</h3>
+    <input id="district" placeholder="District">
+    <button onclick="saveDistrict()">Next</button>
+  </div>`;
 }
 function saveDistrict(){
-  currentDistrict=districtInput.value;
-  db.ref("India/"+currentState+"/Districts/"+currentDistrict).set(true);
+  selectedPath.district = district.value;
   loadPanchayat();
 }
 
-/* PANCHAYAT */
+/* ---------- PANCHAYAT ---------- */
 function loadPanchayat(){
-  stepTitle.innerText=currentDistrict+" → पंचायत जोड़ें";
-  content.innerHTML=`
-  <input id="panchayatInput" class="w-full p-3 border rounded mb-3" placeholder="पंचायत का नाम">
-  <button class="w-full bg-blue-600 text-white p-3 rounded" onclick="savePanchayat()">Save Panchayat</button>
-  `;
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <h3>पंचायत जोड़ें</h3>
+    <input id="panchayat" placeholder="Panchayat">
+    <button onclick="savePanchayat()">Next</button>
+  </div>`;
 }
 function savePanchayat(){
-  currentPanchayat=panchayatInput.value;
-  db.ref(`India/${currentState}/Districts/${currentDistrict}/Panchayats/${currentPanchayat}`).set(true);
+  selectedPath.panchayat = panchayat.value;
   loadVillage();
 }
 
-/* VILLAGE */
+/* ---------- VILLAGE ---------- */
 function loadVillage(){
-  stepTitle.innerText=currentPanchayat+" → गाँव जोड़ें";
-  content.innerHTML=`
-  <input id="villageInput" class="w-full p-3 border rounded mb-3" placeholder="गाँव का नाम">
-  <button class="w-full bg-purple-600 text-white p-3 rounded" onclick="saveVillage()">Save Village</button>
-  `;
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <h3>गाँव जोड़ें</h3>
+    <input id="village" placeholder="Village">
+    <button onclick="saveVillage()">Save</button>
+  </div>`;
 }
 function saveVillage(){
-  currentVillage=villageInput.value;
-  db.ref(`India/${currentState}/Districts/${currentDistrict}/Panchayats/${currentPanchayat}/Villages/${currentVillage}`).set(true);
-  loadOptions();
+  selectedPath.village = village.value;
+  showOptions();
 }
 
-/* WORKER / CUSTOMER */
-function loadOptions(){
-  stepTitle.innerText=currentVillage+" → विकल्प चुनें";
-  content.innerHTML=`
-  <button class="w-full bg-red-600 text-white p-3 rounded mb-3" onclick="addWorker()">Worker</button>
-  <button class="w-full bg-gray-700 text-white p-3 rounded" onclick="addCustomer()">Customer</button>
-  `;
+/* ---------- OPTIONS ---------- */
+function showOptions(){
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <button onclick="workerForm()">🧑‍🔧 Worker</button>
+    <button onclick="customerView()">🧍 Customer</button>
+  </div>`;
 }
 
-function addWorker(){
-  alert("यहाँ Worker का पूरा Form आगे जोड़ा जाएगा");
-}
-function addCustomer(){
-  alert("यहाँ Customer का Page खुलेगा");
+/* ---------- WORKER ---------- */
+function workerForm(){
+  document.getElementById("app").innerHTML = `
+  <div class="card">
+    <h3>Worker जोड़ें</h3>
+    <input id="wname" placeholder="Worker Name">
+    <input id="work" placeholder="काम (Electrician)">
+    <input id="villages" placeholder="गाँव (comma से)">
+    <button onclick="saveWorker()">Save Worker</button>
+  </div>`;
 }
 
-/* START */
-loadStates();
+function saveWorker(){
+  let id = Date.now();
+  let villagesArr = villages.value.split(",");
+  let villageObj = {};
+  villagesArr.forEach(v=>{
+    let path = selectedPath.state+"/"+selectedPath.district+"/"+selectedPath.panchayat+"/"+v.trim();
+    villageObj[path]=true;
+  });
+
+  db.ref("workers/"+id).set({
+    name:wname.value,
+    work:work.value,
+    villages:villageObj
+  });
+  alert("Worker Saved");
+  showOptions();
+}
+
+/* ---------- CUSTOMER ---------- */
+function customerView(){
+  document.getElementById("app").innerHTML = `<h3>Workers List</h3><div id="list"></div>`;
+  let currentVillage = selectedPath.state+"/"+selectedPath.district+"/"+selectedPath.panchayat+"/"+selectedPath.village;
+
+  db.ref("workers").once("value",snap=>{
+    snap.forEach(w=>{
+      let data = w.val();
+      if(data.villages[currentVillage]){
+        document.getElementById("list").innerHTML += `
+        <div class="card worker-card">
+          <b>${data.name}</b><br>
+          काम: ${data.work}
+        </div>`;
+      }
+    });
+  });
+}
 </script>
 
 </body>
