@@ -164,5 +164,23 @@ function customerView() {
 
 showStates();
 </script>
+    <button 
+  style="margin-top:20px;padding:15px;width:100%;background:#000;color:#fff;font-size:16px"
+  onclick="testFirebase()"
+>
+🔥 Firebase Connection Test
+</button>
+
+<script>
+function testFirebase(){
+  firebase.database().ref("test").set({ ok: true })
+    .then(() => {
+      alert("✅ Firebase connected successfully");
+    })
+    .catch(error => {
+      alert("❌ Firebase error: " + error.message);
+    });
+}
+</script>
 </body>
 </html>
