@@ -3,72 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gram Shakti | Select State</title>
+<title>Gram Shakti | Master Setup</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- 🔴 FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body { font-family: 'Hind', sans-serif; }
-.state-card{
-    height:110px;
-    border-radius:14px;
-    padding:12px;
-    display:flex;
-    align-items:flex-end;
-    font-weight:800;
-    color:white;
-    cursor:pointer;
-    transition:transform .15s ease;
-}
-.state-card:active{
-    transform:scale(0.95);
-}
+body{font-family:Hind,sans-serif}
+.card{border-radius:14px;padding:16px;font-weight:800}
 </style>
 </head>
 
-<body class="max-w-md mx-auto min-h-screen bg-gray-50 p-4 flex flex-col">
+<body class="max-w-md mx-auto min-h-screen bg-gray-50 p-4">
 
-<!-- HEADER -->
-<header class="mb-4">
-    <h2 class="text-2xl font-black">Select State</h2>
-    <p class="text-sm text-gray-500">राज्य चुनें, फिर जिले दिखेंगे</p>
-</header>
+<h2 class="text-2xl font-black mb-4">Gram Shakti Setup</h2>
 
-<!-- STATES -->
-<div class="grid grid-cols-2 gap-4 flex-grow">
-
-<div class="state-card bg-orange-600" onclick="selectState('Bihar')">Bihar</div>
-<div class="state-card bg-green-600" onclick="selectState('Madhya Pradesh')">Madhya Pradesh</div>
-<div class="state-card bg-blue-600" onclick="selectState('Gujarat')">Gujarat</div>
-<div class="state-card bg-purple-600" onclick="selectState('West Bengal')">West Bengal</div>
-<div class="state-card bg-pink-600" onclick="selectState('Karnataka')">Karnataka</div>
-<div class="state-card bg-indigo-600" onclick="selectState('Uttar Pradesh')">Uttar Pradesh</div>
-<div class="state-card bg-yellow-600 text-black" onclick="selectState('Rajasthan')">Rajasthan</div>
-<div class="state-card bg-red-600" onclick="selectState('Punjab')">Punjab</div>
-<div class="state-card bg-teal-600" onclick="selectState('Maharashtra')">Maharashtra</div>
-<div class="state-card bg-gray-700" onclick="selectState('Haryana')">Haryana</div>
-
+<!-- STEP DISPLAY -->
+<div id="stepTitle" class="font-bold mb-3 text-orange-600">
+राज्य चुनें
 </div>
 
-<!-- BOTTOM NAV (SAFE SIMPLE) -->
-<nav class="mt-4 bg-white rounded-xl shadow flex justify-around py-3">
-    <span class="text-orange-600 font-bold text-sm">States</span>
-    <span class="text-gray-400 text-sm">Workers</span>
-    <span class="text-gray-400 text-sm">Profile</span>
-</nav>
+<!-- CONTENT -->
+<div id="content"></div>
 
 <script>
-function selectState(stateName){
-    // state save (future firebase / session use)
-    localStorage.setItem("selectedState", stateName);
+/* =====================================================
+ 🔴🔴🔴 यहाँ अपनी Firebase की DETAILS PASTE करें 🔴🔴🔴
+ Firebase Console → Project Settings → Web App
+===================================================== */
 
-    // अभी demo के लिए
-    alert("Selected State: " + stateName);
+const firebaseConfig = {
+  apiKey: "🔴 यहाँ अपनी API KEY डालें",
+  authDomain: "🔴 यहाँ authDomain डालें",
+  databaseURL: "🔴 यहाँ databaseURL डालें",
+  projectId: "🔴 यहाँ projectId डालें"
+};
 
-    // आगे district page
-    // window.location.href = "district.html?state=" + stateName;
+/* ===================================================== */
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* GLOBAL DATA */
+let currentState = "";
+let currentDistrict = "";
+let currentPanchayat = "";
+let currentVillage = "";
+
+/* STATES LIST (ALL INDIA) */
+const states = [
+"Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
+"Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
+"Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
+"Meghalaya","Mizoram","Nagaland","Odisha","Punjab",
+"Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
+"Uttar Pradesh","Uttarakhand","West Bengal"
+];
+
+/* LOAD STATES */
+function loadStates(){
+  stepTitle.innerText="राज्य चुनें";
+  content.innerHTML="";
+  states.forEach(state=>{
+    const div=document.createElement("div");
+    div.className="card bg-orange-500 text-white mb-3";
+    div.innerText=state;
+    div.onclick=()=>{currentState=state; loadDistrict();}
+    content.appendChild(div);
+  });
 }
+
+/* DISTRICT */
+function loadDistrict(){
+  stepTitle.innerText=currentState+" → जिला जोड़ें";
+  content.innerHTML=`
+  <input id="districtInput" class="w-full p-3 border rounded mb-3" placeholder="जिले का नाम">
+  <button class="w-full bg-green-600 text-white p-3 rounded" onclick="saveDistrict()">Save District</button>
+  `;
+}
+function saveDistrict(){
+  currentDistrict=districtInput.value;
+  db.ref("India/"+currentState+"/Districts/"+currentDistrict).set(true);
+  loadPanchayat();
+}
+
+/* PANCHAYAT */
+function loadPanchayat(){
+  stepTitle.innerText=currentDistrict+" → पंचायत जोड़ें";
+  content.innerHTML=`
+  <input id="panchayatInput" class="w-full p-3 border rounded mb-3" placeholder="पंचायत का नाम">
+  <button class="w-full bg-blue-600 text-white p-3 rounded" onclick="savePanchayat()">Save Panchayat</button>
+  `;
+}
+function savePanchayat(){
+  currentPanchayat=panchayatInput.value;
+  db.ref(`India/${currentState}/Districts/${currentDistrict}/Panchayats/${currentPanchayat}`).set(true);
+  loadVillage();
+}
+
+/* VILLAGE */
+function loadVillage(){
+  stepTitle.innerText=currentPanchayat+" → गाँव जोड़ें";
+  content.innerHTML=`
+  <input id="villageInput" class="w-full p-3 border rounded mb-3" placeholder="गाँव का नाम">
+  <button class="w-full bg-purple-600 text-white p-3 rounded" onclick="saveVillage()">Save Village</button>
+  `;
+}
+function saveVillage(){
+  currentVillage=villageInput.value;
+  db.ref(`India/${currentState}/Districts/${currentDistrict}/Panchayats/${currentPanchayat}/Villages/${currentVillage}`).set(true);
+  loadOptions();
+}
+
+/* WORKER / CUSTOMER */
+function loadOptions(){
+  stepTitle.innerText=currentVillage+" → विकल्प चुनें";
+  content.innerHTML=`
+  <button class="w-full bg-red-600 text-white p-3 rounded mb-3" onclick="addWorker()">Worker</button>
+  <button class="w-full bg-gray-700 text-white p-3 rounded" onclick="addCustomer()">Customer</button>
+  `;
+}
+
+function addWorker(){
+  alert("यहाँ Worker का पूरा Form आगे जोड़ा जाएगा");
+}
+function addCustomer(){
+  alert("यहाँ Customer का Page खुलेगा");
+}
+
+/* START */
+loadStates();
 </script>
 
 </body>
