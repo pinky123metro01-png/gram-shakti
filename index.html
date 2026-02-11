@@ -87,9 +87,6 @@
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.1);
   }
-  .state-grid-item:active {
-    transform: translateY(0);
-  }
   .highlight-danger {
     background: #fee2e2;
     border-left: 4px solid #ef4444;
@@ -110,6 +107,24 @@
     font-size: 2.2rem;
     line-height: 1;
   }
+  /* Neela G Logo Style */
+  #adminLogo {
+    background: #2563eb; /* Blue Color */
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    transition: transform 0.2s;
+  }
+  #adminLogo:active { transform: scale(0.9); }
 </style>
 </head>
 <body>
@@ -133,7 +148,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let userFlow = { state: "", district: "", panchayat: "", village: "" };
-const badWords = ["गाली", "sala", "haram", "pagal", "bad", "foul", "chutiya", "bhenchod"]; // अधिक शब्द जोड़े गए
+const badWords = ["गाली", "sala", "haram", "pagal", "bad", "foul", "chutiya", "bhenchod"];
 
 // --- 1. राज्य चयन ---
 function showStates() {
@@ -148,7 +163,7 @@ function showStates() {
   
   let html = `
     <div class="flex items-center justify-between mb-8">
-      <div id="adminLogo" class="w-12 h-12 bg-f97316 text-white rounded-full flex items-center justify-center text-2xl font-bold cursor-pointer select-none shadow-md">G</div>
+      <div id="adminLogo">G</div>
       <h1 class="header-logo">ग्राम शक्ति</h1>
       <div class="w-12"></div>
     </div>
@@ -161,95 +176,75 @@ function showStates() {
 
 function selectState(s) { userFlow.state = s; showDistrictStep(); }
 
-// --- 2. जिला ---
 function showDistrictStep() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
     <h2 class="text-xl font-semibold text-gray-800 mb-2">जिला का नाम लिखें</h2>
     <p class="text-sm text-gray-500 mb-6">${userFlow.state}</p>
-    <input id="distInp" class="input-field" placeholder="उदाहरण: पटना, जयपुर...">
+    <input id="distInp" class="input-field" placeholder="जिला लिखें...">
     <button onclick="saveDistrict()" class="btn-primary">आगे बढ़ें</button>
   `;
 }
 function saveDistrict() {
   const val = document.getElementById("distInp").value.trim();
-  if(!val) return showMessage('error', "कृपया जिला का नाम लिखें!");
+  if(!val) return showMessage('error', "जिला लिखें!");
   userFlow.district = val;
   showPanchayatStep();
 }
 
-// --- 3. पंचायत ---
 function showPanchayatStep() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
-    <h2 class="text-xl font-semibold text-gray-800 mb-2">अपनी पंचायत लिखें</h2>
-    <p class="text-sm text-gray-500 mb-6">${userFlow.district}, ${userFlow.state}</p>
-    <input id="panchInp" class="input-field" placeholder="उदाहरण: रामपुर पंचायत...">
+    <h2 class="text-xl font-semibold text-gray-800 mb-2">पंचायत लिखें</h2>
+    <p class="text-sm text-gray-500 mb-6">${userFlow.district}</p>
+    <input id="panchInp" class="input-field" placeholder="पंचायत लिखें...">
     <button onclick="savePanchayat()" class="btn-primary">आगे बढ़ें</button>
   `;
 }
 function savePanchayat() {
   const val = document.getElementById("panchInp").value.trim();
-  if(!val) return showMessage('error', "कृपया पंचायत का नाम लिखें!");
+  if(!val) return showMessage('error', "पंचायत लिखें!");
   userFlow.panchayat = val;
   showVillageStep();
 }
 
-// --- 4. गाँव ---
 function showVillageStep() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
-    <h2 class="text-xl font-semibold text-gray-800 mb-2">अपने गाँव का नाम लिखें</h2>
-    <p class="text-sm text-gray-500 mb-6">${userFlow.panchayat}, ${userFlow.district}</p>
-    <input id="villInp" class="input-field" placeholder="उदाहरण: नयागाँव, किशनपुर...">
+    <h2 class="text-xl font-semibold text-gray-800 mb-2">गाँव का नाम लिखें</h2>
+    <input id="villInp" class="input-field" placeholder="गाँव लिखें...">
     <button onclick="saveVillage()" class="btn-primary">शुरू करें</button>
   `;
 }
 function saveVillage() {
   const val = document.getElementById("villInp").value.trim();
-  if(!val) return showMessage('error', "कृपया गाँव का नाम लिखें!");
+  if(!val) return showMessage('error', "गाँव लिखें!");
   userFlow.village = val;
-  showOptions(); // यहाँ से चुनाव करें - ग्राम साथी या ग्राहक
+  showOptions();
 }
 
-// --- 5. मुख्य विकल्प (ग्राम साथी / ग्राहक) ---
 function showOptions() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
-    <p class="text-center text-gray-500 text-sm mb-8">${userFlow.village}, ${userFlow.panchayat}, ${userFlow.district}, ${userFlow.state}</p>
-    <button onclick="showRegistration()" class="btn-primary">🤝 मैं ग्राम साथी हूँ (पंजीकरण)</button>
-    <button onclick="showCustomerView()" class="btn-primary !bg-white !text-f97316 border border-f97316 mt-4 shadow-sm">🔍 सेवा ढूंढें (ग्राहक)</button>
-    <button onclick="showStates()" class="w-full text-center text-gray-400 text-sm mt-8 underline">स्थान बदलें</button>
+    <p class="text-center text-gray-500 text-sm mb-8">${userFlow.village}, ${userFlow.panchayat}</p>
+    <button onclick="showRegistration()" class="btn-primary">🤝 मैं ग्राम साथी हूँ</button>
+    <button onclick="showCustomerView()" class="btn-primary !bg-white !text-f97316 border border-f97316 mt-4 shadow-sm">🔍 सेवा ढूंढें</button>
   `;
 }
 
-// --- 6. वर्कर रजिस्ट्रेशन फॉर्म ---
 function showRegistration() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
-    <p class="text-center text-gray-500 text-sm mb-6">${userFlow.village} में पंजीकरण</p>
-    
-    <input id="wname" class="input-field" placeholder="आपका पूरा नाम">
-    <input id="wphone" class="input-field" placeholder="मोबाइल नंबर (उदा: 9876543210)" type="tel">
-    
+    <input id="wname" class="input-field" placeholder="पूरा नाम">
+    <input id="wphone" class="input-field" placeholder="मोबाइल नंबर" type="tel">
     <select id="wwork" class="input-field">
-      <option value="">काम चुनें (सुई से JCB तक)</option>
-      <optgroup label="भारी मशीनरी">
-        <option>JCB Operator</option><option>Tractor Driver</option><option>Combine Harvester</option>
-      </optgroup>
-      <optgroup label="मिस्त्री & कारीगर">
-        <option>राजमिस्त्री</option><option>इलेक्ट्रीशियन</option><option>प्लंबर</option><option>बढ़ई</option><option>पेंटर</option><option>दर्जी</option>
-      </optgroup>
-      <optgroup label="दुकान & सेवाएं">
-        <option>किराना दुकान</option><option>दूध डेयरी</option><option>मेडिकल स्टोर</option><option>टेंट हाउस</option><option>DJ साउंड</option><option>ड्राइवर (कार/ऑटो)</option>
-      </optgroup>
-      <optgroup label="छोटी सेवाएं">
-        <option>मजदूर</option><option>नाई</option><option>पंडित जी</option><option>हलवाई</option><option>सफाई कर्मचारी</option>
-      </optgroup>
+      <option value="">काम चुनें</option>
+      <optgroup label="भारी मशीनरी"><option>JCB Operator</option><option>Tractor Driver</option></optgroup>
+      <optgroup label="मिस्त्री & कारीगर"><option>राजमिस्त्री</option><option>इलेक्ट्रीशियन</option></optgroup>
+      <optgroup label="दुकान & सेवाएं"><option>किराना दुकान</option><option>दूध डेयरी</option></optgroup>
+      <optgroup label="छोटी सेवाएं"><option>मजदूर</option><option>नाई</option></optgroup>
     </select>
-    
     <button onclick="saveWorker()" class="btn-primary">पंजीकरण करें</button>
-    <button onclick="showOptions()" class="w-full text-center text-gray-400 text-sm mt-4 underline">पीछे जाएँ</button>
   `;
 }
 
@@ -257,58 +252,41 @@ function saveWorker() {
   const n = document.getElementById("wname").value.trim();
   const p = document.getElementById("wphone").value.trim();
   const w = document.getElementById("wwork").value;
-  if(!n || !p || !w) return showMessage('error', "कृपया सभी जानकारी भरें!");
+  if(!n || !p || !w) return showMessage('error', "पूरी जानकारी भरें!");
 
   db.ref("workers").push({
     name: n, phone: p, work: w,
     location: `${userFlow.state}/${userFlow.district}/${userFlow.panchayat}/${userFlow.village}`,
-    rating: 5,
-    comments: [], // शुरुआत में कोई कमेंट नहीं
-    time: Date.now()
+    rating: 5, comments: [], time: Date.now()
   }).then(() => {
-    showMessage('success', "आपका पंजीकरण सफल रहा!");
-    showOptions(); // पंजीकरण के बाद वापस मुख्य विकल्प पर भेजें
-  }).catch(e => {
-    showMessage('error', "डेटा सेव नहीं हुआ: " + e.message);
+    showMessage('success', "पंजीकरण सफल!");
+    showOptions();
   });
 }
 
-// --- 7. ग्राहक व्यू ---
 function showCustomerView() {
   document.getElementById("app-container").innerHTML = `
     <h1 class="header-logo text-center mb-6">ग्राम शक्ति</h1>
-    <p class="text-center text-gray-500 text-sm mb-6">आपके गाँव में उपलब्ध सेवाएं</p>
     <div id="workerList" class="space-y-4 max-h-[350px] overflow-y-auto pr-2">लोड हो रहा है...</div>
     <button onclick="showOptions()" class="btn-primary !bg-white !text-f97316 border border-f97316 mt-6 shadow-sm">पीछे जाएँ</button>
   `;
-
   const currentPath = `${userFlow.state}/${userFlow.district}/${userFlow.panchayat}/${userFlow.village}`;
   db.ref("workers").on("value", (snapshot) => {
     let html = "";
-    let found = false;
     snapshot.forEach((child) => {
-      const worker = child.val();
-      if (worker.location === currentPath) {
-        found = true;
-        html += `
-          <div class="p-4 bg-white rounded-xl shadow-md border-l-4 border-f97316 flex justify-between items-center">
-            <div>
-              <p class="font-semibold text-gray-800 text-lg">${worker.name}</p>
-              <p class="text-f97316 text-sm font-medium">${worker.work}</p>
-            </div>
-            <a href="tel:${worker.phone}" class="bg-green-500 text-white p-3 rounded-full shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </a>
-          </div>`;
+      const w = child.val();
+      if (w.location === currentPath) {
+        html += `<div class="p-4 bg-white rounded-xl shadow-md border-l-4 border-f97316 flex justify-between items-center">
+                   <div><p class="font-bold">${w.name}</p><p class="text-f97316 text-sm">${w.work}</p></div>
+                   <a href="tel:${w.phone}" class="bg-green-500 text-white p-2 rounded-full shadow-lg">📞</a>
+                 </div>`;
       }
     });
-    document.getElementById("workerList").innerHTML = html || "<p class='text-center text-gray-500'>इस गाँव में अभी कोई सेवा उपलब्ध नहीं है।</p>";
+    document.getElementById("workerList").innerHTML = html || "कोई सेवा नहीं मिली";
   });
 }
 
-// --- एडमिन पैनल फंक्शन ---
+// --- एडमिन पैनल (G लोगो के पीछे) ---
 function setupAdminHold() {
   const logo = document.getElementById("adminLogo");
   let timer;
@@ -321,102 +299,40 @@ function setupAdminHold() {
 
 function showAdminPanel() {
   document.getElementById("app-container").innerHTML = `
-    <div class="flex justify-between items-center mb-6 pb-4 border-b">
-      <h2 class="text-2xl font-bold text-red-600">मास्टर कंट्रोल</h2>
-      <button onclick="showStates()" class="bg-gray-100 px-3 py-1 rounded-lg text-sm text-gray-700">Logout</button>
+    <div class="flex justify-between items-center mb-6 border-b pb-2">
+      <h2 class="text-2xl font-bold text-red-600">एडमिन पैनल</h2>
+      <button onclick="location.reload()" class="bg-gray-100 px-3 py-1 rounded-lg text-sm">बंद करें</button>
     </div>
-    <div id="adminWorkerList" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">लोड हो रहा है...</div>
+    <div id="adminWorkerList" class="space-y-4 max-h-[400px] overflow-y-auto">लोड हो रहा है...</div>
   `;
-
   db.ref("workers").on("value", (snap) => {
     let html = "";
-    if (!snap.exists()) {
-      html = "<p class='text-center text-gray-500'>कोई वर्कर डेटा नहीं है।</p>";
-    } else {
-      snap.forEach(child => {
-        const data = child.val();
-        const workerId = child.key;
-        let commentHtml = "";
-        let hasBadWord = false;
-
-        if(data.comments && data.comments.length > 0) {
-          data.comments.forEach(c => {
-            const isBad = badWords.some(word => c.text.toLowerCase().includes(word));
-            if (isBad) hasBadWord = true;
-            commentHtml += `<p class="text-xs ${isBad ? 'highlight-danger' : 'bg-gray-50'} p-2 rounded-md mt-1">
-                              ${c.user || 'अज्ञात'}: ${c.text}
-                              ${isBad ? '<span class="ml-1 font-bold">⚠️</span>' : ''}
-                            </p>`;
-          });
-        } else {
-          commentHtml = "<p class='text-xs text-gray-400 mt-1'>कोई कमेंट नहीं</p>";
-        }
-
-        html += `
-          <div class="p-4 bg-white rounded-xl shadow-md border-l-4 ${hasBadWord ? 'border-red-500' : 'border-f97316'}">
-            <div class="flex justify-between items-start mb-2">
-              <div>
-                <p class="font-semibold text-lg">${data.name} (${data.work})</p>
-                <p class="text-xs text-gray-500">${data.location}</p>
-                <p class="text-f97316 font-semibold text-sm">${data.phone}</p>
-              </div>
-              <button onclick="deleteEntry('${workerId}')" class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-600 transition">डिलीट</button>
-            </div>
-            <div class="border-t pt-2 mt-2">
-              <h4 class="font-semibold text-sm text-gray-700">कमेंट्स:</h4>
-              ${commentHtml}
-              <input type="text" id="comment-${workerId}" class="input-field mt-3 mb-2" placeholder="कमेंट लिखें...">
-              <button onclick="addComment('${workerId}')" class="btn-primary !py-2 !text-sm !mt-0 !shadow-none">कमेंट जोड़ें</button>
-            </div>
-          </div>`;
-      });
-    }
-    document.getElementById("adminWorkerList").innerHTML = html;
+    snap.forEach(child => {
+      const data = child.val();
+      html += `<div class="p-4 bg-white rounded-xl shadow-md border-l-4 border-f97316 flex justify-between">
+                 <div><p class="font-bold">${data.name}</p><p class="text-xs text-gray-500">${data.location}</p></div>
+                 <button onclick="deleteEntry('${child.key}')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">Delete</button>
+               </div>`;
+    });
+    document.getElementById("adminWorkerList").innerHTML = html || "डेटा नहीं है";
   });
 }
 
 function deleteEntry(id) {
-  if(confirm("रवि भाई, क्या आप इस वर्कर को डिलीट करना चाहते हैं?")) {
-    db.ref("workers/" + id).remove()
-      .then(() => showMessage('success', 'वर्कर सफलतापूर्वक डिलीट किया गया।'))
-      .catch((e) => showMessage('error', 'डिलीट करते समय त्रुटि: ' + e.message));
-  }
+  if(confirm("डिलीट करें?")) db.ref("workers/" + id).remove();
 }
 
-function addComment(workerId) {
-  const commentInput = document.getElementById(`comment-${workerId}`);
-  const commentText = commentInput.value.trim();
-  if (!commentText) {
-    showMessage('error', 'कृपया कमेंट लिखें।');
-    return;
-  }
-
-  const workerRef = db.ref(`workers/${workerId}/comments`);
-  workerRef.push({
-    text: commentText,
-    user: "Master Admin", // कमेंट किसने किया
-    time: Date.now()
-  })
-  .then(() => {
-    commentInput.value = ''; // इनपुट साफ़ करें
-    showMessage('success', 'कमेंट सफलतापूर्वक जोड़ा गया।');
-  })
-  .catch((e) => showMessage('error', 'कमेंट जोड़ते समय त्रुटि: ' + e.message));
-}
-
-// --- यूनिवर्सल मैसेज पॉपअप ---
 function showMessage(type, message) {
   const msgContent = document.getElementById("msgContent");
   msgContent.innerHTML = `
     <div class="text-5xl mb-4">${type === 'success' ? '✅' : '❌'}</div>
-    <h3 class="text-xl font-bold ${type === 'success' ? 'text-green-600' : 'text-red-600'}">${type === 'success' ? 'सफलता!' : 'त्रुटि!'}</h3>
-    <p class="mt-2 text-gray-700">${message}</p>
-    <button onclick="document.getElementById('msgBox').classList.add('hidden')" class="mt-6 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white w-full py-3 rounded-xl font-bold">ठीक है</button>
+    <h3 class="text-xl font-bold">${message}</h3>
+    <button onclick="document.getElementById('msgBox').classList.add('hidden')" class="mt-6 bg-orange-600 text-white w-full py-2 rounded-xl">OK</button>
   `;
   document.getElementById("msgBox").classList.remove("hidden");
 }
 
-showStates(); // ऐप शुरू करें
+showStates();
 </script>
 </body>
 </html>
