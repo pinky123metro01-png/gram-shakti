@@ -3,49 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gram Shakti | Final Master App</title>
-    
+    <title>Gram Shakti | With Ads Slot</title>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
         body { font-family: 'Hind', sans-serif; background-color: #f8fafc; }
-        .state-card { height: 100px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 16px; color: white; font-weight: 700; transition: 0.3s; text-align: center; padding: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .g1 { background: linear-gradient(135deg, #FF512F, #DD2476); }
-        .g2 { background: linear-gradient(135deg, #4776E6, #8E54E9); }
-        .g3 { background: linear-gradient(135deg, #00b09b, #96c93d); }
-        .g4 { background: linear-gradient(135deg, #f857a6, #ff5858); }
-        .g5 { background: linear-gradient(135deg, #1D2671, #C33764); }
-        .g6 { background: linear-gradient(135deg, #1fa2ff, #12d8fa); }
-        .g7 { background: linear-gradient(135deg, #f7971e, #ffd200); }
-        .g8 { background: linear-gradient(135deg, #606c88, #3f4c6b); }
-        .g9 { background: linear-gradient(135deg, #000428, #004e92); }
-        .g10 { background: linear-gradient(135deg, #7b4397, #dc2430); }
         .btn-main { background: #ea580c; color: white; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 15px; }
         input, select { border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; width: 100%; margin-top: 8px; outline: none; background: white; }
-        .worker-card { border-left: 5px solid #22c55e; background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .state-card { background: #ea580c; color: white; padding: 20px; border-radius: 15px; text-align: center; font-weight: bold; cursor: pointer; }
+        #adminLoginBtn { display: none; }
+        /* Ad Styles */
+        .ad-container { background: #eee; border: 1px dashed #ccc; text-align: center; font-size: 10px; color: #999; overflow: hidden; }
+        .sticky-bottom-ad { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; z-index: 100; background: white; border-top: 1px solid #ddd; }
     </style>
 </head>
-<body class="max-w-md mx-auto min-h-screen bg-white shadow-2xl">
+<body class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative">
 
     <header class="flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-50">
         <div class="flex items-center gap-3">
             <div id="adminLogo" class="bg-orange-600 text-white w-10 h-10 flex items-center justify-center rounded-xl text-xl font-bold cursor-pointer select-none">G</div>
             <div>
                 <h1 class="font-bold text-lg text-gray-800">Gram Shakti</h1>
-                <p id="roleLabel" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Select State</p>
+                <p id="roleLabel" class="text-[10px] text-gray-400 font-bold uppercase">Select State</p>
             </div>
         </div>
-        <button onclick="loginPage()" class="text-[10px] font-bold text-orange-600 border border-orange-600 px-2 py-1 rounded">Admin Login</button>
+        <button id="adminLoginBtn" onclick="loginPage()" class="text-[10px] font-bold text-orange-600 border border-orange-600 px-2 py-1 rounded">Admin Login</button>
     </header>
 
-    <div id="app" class="p-5 pb-24"></div>
+    <div id="topAdSlot" class="ad-container w-full h-24 flex items-center justify-center mb-2">
+        <img src="https://via.placeholder.com/400x100?text=Aapka+Vigyapan+Yahan+Lagega" class="w-full h-full object-cover">
+    </div>
+
+    <div id="app" class="p-5 pb-32"></div>
+
+    <div id="bottomAdSlot" class="sticky-bottom-ad flex items-center justify-center ad-container">
+        <span>Google AdSense / Banner Ad Space</span>
+    </div>
 
 <script>
-// --- FIREBASE CONFIG ---
 const firebaseConfig = {
   apiKey: "AIzaSyCuvev3-jwZwQu0_fHYyv2E2ovLny4LhRQ",
   authDomain: "gram-shakti-b135a.firebaseapp.com",
@@ -55,200 +52,99 @@ const firebaseConfig = {
   appId: "1:340909973482:web:c562cb3dd591b78de21c93",
   databaseURL: "https://gram-shakti-b135a-default-rtdb.firebaseio.com"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let selected = { state: "", district: "", panchayat: "", village: "" };
-let currentUser = { role: "USER", email: "" };
+let currentUser = { role: "USER" };
 
-// --- 1. Master Admin Login (Ravi Bhai) ---
+// Master Admin Logic (3 sec hold on G)
 let timer;
-document.getElementById("adminLogo").addEventListener("mousedown", () => {
+const logo = document.getElementById("adminLogo");
+const startTimer = () => {
     timer = setTimeout(() => {
-        let pass = prompt("Master Password Dalein:");
+        let pass = prompt("Master Password:");
         if(pass === "Vikas0627.") { 
             currentUser.role = "MAIN_ADMIN";
             document.getElementById("roleLabel").innerText = "MASTER CONTROL";
+            document.getElementById("adminLoginBtn").style.display = "block";
+            alert("Master Access Granted!");
             showStates();
         }
-    }, 2000);
-});
-document.getElementById("adminLogo").addEventListener("mouseup", () => clearTimeout(timer));
+    }, 3000);
+};
+logo.addEventListener("mousedown", startTimer);
+logo.addEventListener("mouseup", () => clearTimeout(timer));
+logo.addEventListener("touchstart", startTimer);
+logo.addEventListener("touchend", () => clearTimeout(timer));
 
-// --- 2. State & District Admin Login ---
-function loginPage() {
-    document.getElementById("app").innerHTML = `
-        <h2 class="text-xl font-bold mb-4">एडमिन लॉगिन</h2>
-        <input id="logEmail" type="email" placeholder="ईमेल आईडी">
-        <input id="logPass" type="password" placeholder="पासवर्ड">
-        <button onclick="authAdmin()" class="btn-main">प्रवेश करें</button>
-        <button onclick="showStates()" class="w-full text-xs text-gray-400 mt-4 underline">वापस जाएँ</button>
-    `;
-}
-
-function authAdmin() {
-    let email = document.getElementById("logEmail").value;
-    let pass = document.getElementById("logPass").value;
-    db.ref("adminAccounts").once("value", snap => {
-        let found = false;
-        snap.forEach(child => {
-            let acc = child.val();
-            if(acc.email === email && acc.password === pass) {
-                found = true;
-                currentUser = { role: acc.role, email: email, state: acc.state, dist: acc.dist };
-                document.getElementById("roleLabel").innerText = acc.role.replace("_", " ");
-                showStates();
-            }
-        });
-        if(!found) alert("गलत आईडी या पासवर्ड!");
-    });
-}
-
-// --- 3. App flow ---
 function showStates() {
-    const states = [{n:'Uttar Pradesh',c:'g1'},{n:'Bihar',c:'g2'},{n:'Madhya Pradesh',c:'g3'},{n:'Rajasthan',c:'g4'},{n:'Gujarat',c:'g5'},{n:'Punjab',c:'g6'},{n:'Haryana',c:'g7'},{n:'Maharashtra',c:'g8'},{n:'West Bengal',c:'g9'},{n:'Karnataka',c:'g10'}];
-    let html = `<h2 class="text-2xl font-black mb-5">अपना राज्य चुनें</h2><div class="grid grid-cols-2 gap-4">`;
-    states.forEach(st => { html += `<div class="state-card ${st.c}" onclick="pickState('${st.n}')">${st.n}</div>`; });
+    const states = ['Uttar Pradesh', 'Bihar', 'Madhya Pradesh', 'Rajasthan', 'Gujarat', 'Punjab', 'Haryana', 'Maharashtra', 'West Bengal', 'Karnataka'];
+    let html = `<h2 class="text-2xl font-black mb-5 text-center">अपना राज्य चुनें</h2><div class="grid grid-cols-2 gap-4">`;
+    states.forEach(st => { html += `<div class="state-card" onclick="pickState('${st}')">${st}</div>`; });
     document.getElementById("app").innerHTML = html + `</div>`;
 }
 
-function pickState(s) {
-    selected.state = s;
-    if(currentUser.role === "MAIN_ADMIN") {
-        manageStateAdmin(s);
-    } else {
-        showDistrictInp();
-    }
-}
-
-function showDistrictInp() {
-    document.getElementById("app").innerHTML = `<h2>${selected.state} - जिला लिखें</h2><input id="dist" placeholder="जिला का नाम"><button onclick="pickDist()" class="btn-main">आगे बढ़ें</button>`;
-}
-
-function pickDist() {
-    selected.district = document.getElementById("dist").value;
-    if(currentUser.role === "MAIN_ADMIN" || currentUser.role === "STATE_ADMIN") {
-        manageDistrictAdmin(selected.district);
-    } else {
-        showPanchayatInp();
-    }
-}
-
-function showPanchayatInp() {
-    document.getElementById("app").innerHTML = `<h2>पंचायत लिखें</h2><input id="panch" placeholder="पंचायत का नाम"><button onclick="selected.panchayat=document.getElementById('panch').value; showVillageInp()" class="btn-main">आगे बढ़ें</button>`;
-}
-
-function showVillageInp() {
-    document.getElementById("app").innerHTML = `<h2>गाँव लिखें</h2><input id="vill" placeholder="गाँव का नाम"><button onclick="selected.village=document.getElementById('vill').value; showOptions()" class="btn-main">शुरू करें</button>`;
-}
+function pickState(s) { selected.state = s; showDistrictInp(); }
+function showDistrictInp() { document.getElementById("app").innerHTML = `<h2>जिला लिखें</h2><input id="dist" placeholder="जिला नाम"><button onclick="pickDist()" class="btn-main">आगे बढ़ें</button>`; }
+function pickDist() { selected.district = document.getElementById("dist").value; showPanchayatInp(); }
+function showPanchayatInp() { document.getElementById("app").innerHTML = `<h2>पंचायत लिखें</h2><input id="panch" placeholder="पंचायत नाम"><button onclick="selected.panchayat=document.getElementById('panch').value; showVillageInp()" class="btn-main">आगे बढ़ें</button>`; }
+function showVillageInp() { document.getElementById("app").innerHTML = `<h2>गाँव लिखें</h2><input id="vill" placeholder="गाँव नाम"><button onclick="selected.village=document.getElementById('vill').value; showOptions()" class="btn-main">शुरू करें</button>`; }
 
 function showOptions() {
     document.getElementById("app").innerHTML = `
-        <div class="text-center py-6"><h2 class="text-3xl font-black">${selected.village}</h2><p class="text-gray-400">${selected.district}, ${selected.state}</p></div>
+        <div class="text-center py-6"><h2 class="text-3xl font-black">${selected.village}</h2><p class="text-gray-400">${selected.district}</p></div>
         <button onclick="workerForm()" class="btn-main h-16 text-lg">🤝 मैं ग्राम साथी हूँ</button>
-        <button onclick="customerView()" class="btn-main bg-white border-2 border-orange-600 !text-orange-600 h-16 text-lg">🔍 सेवा की तलाश है</button>
+        <button onclick="customerView()" class="btn-main bg-white border-2 border-orange-600 !text-orange-600 h-16 text-lg">🔍 सेवा ढूँढें</button>
     `;
 }
 
-// --- 4. Worker Form (Gram Saathi) ---
 function workerForm(){
   document.getElementById("app").innerHTML = `
-    <h3 class="text-xl font-bold mb-2">ग्राम साथी पंजीकरण</h3>
-    <input id="wname" placeholder="आपका नाम">
-    <input id="wphone" type="tel" placeholder="मोबाइल नंबर">
+    <h3 class="text-xl font-bold mb-4">पंजीकरण</h3>
+    <input id="wname" placeholder="नाम">
+    <input id="wphone" type="tel" placeholder="मोबाइल">
     <select id="work">
-        <option value="">-- काम चुनें --</option>
-        <optgroup label="मशीनरी & खेती"><option value="JCB Operator">JCB ऑपरेटर</option><option value="Tractor Driver">ट्रैक्टर ड्राइवर</option><option value="Harvester">हार्वेस्टर</option></optgroup>
-        <optgroup label="डेयरी"><option value="Dairy/Milk">दूध की डेयरी</option><option value="Pashu Doctor">पशु डॉक्टर</option></optgroup>
-        <optgroup label="दुकानें"><option value="Kirana">किराना स्टोर</option><option value="Medical">मेडिकल स्टोर</option><option value="Tent House">टेंट हाउस</option><option value="Mobile Repair">मोबाइल रिपेयर</option></optgroup>
-        <optgroup label="मिस्त्री"><option value="Mistri">राजमिस्त्री</option><option value="Electrician">बिजली मिस्त्री</option><option value="Plumber">नल मिस्त्री</option><option value="Tailor">दर्जी</option></optgroup>
-        <optgroup label="अन्य"><option value="Driver">कार/ऑटो ड्राइवर</option><option value="Pandit ji">पंडित जी</option><option value="Halwai">हलवाई</option></optgroup>
+        <option value="JCB Operator">JCB ऑपरेटर</option>
+        <option value="Driver">ड्राइवर</option>
+        <option value="Dairy">डेयरी</option>
     </select>
     <input id="villages" placeholder="काम के गाँव (गाँव1, गाँव2)">
-    <button onclick="// पुराने catch को हटाकर इसे डालें
-.catch((error) => {
-    console.log(error);
-    alert("गड़बड़ ये है: " + error.message);
-});" class="btn-main">अभी जुड़ें</button>
+    <button onclick="saveWorker()" class="btn-main">सेव करें</button>
   `;
 }
 
 function saveWorker(){
-  let name = document.getElementById("wname").value; let work = document.getElementById("work").value;
-  let phone = document.getElementById("wphone").value; let vInput = document.getElementById("villages").value;
-  if(!name || !work || !phone || !vInput) return alert("सब भरें!");
+  let name = document.getElementById("wname").value;
+  let phone = document.getElementById("wphone").value;
+  let vInput = document.getElementById("villages").value;
+  if(!name || !phone || !vInput) return alert("जानकारी अधूरी है!");
+
   let id = Date.now();
-  let vList = vInput.split(","); let vObj = {};
-  vList.forEach(v=>{ let path = (selected.state+"/"+selected.district+"/"+selected.panchayat+"/"+v.trim()).replace(/\./g, '_'); vObj[path]=true; });
-  db.ref("workers/"+id).set({ name, work, phone, villages: vObj });
-  alert("पंजीकरण सफल!"); showOptions();
-}
-
-// --- 5. Customer View ---
-function customerView(){
-  document.getElementById("app").innerHTML = `<h3 class="font-bold mb-4">ग्राम साथी लिस्ट</h3><div id="list" class="space-y-4"></div>`;
-  let currentPath = (selected.state+"/"+selected.district+"/"+selected.panchayat+"/"+selected.village).replace(/\./g, '_');
-  db.ref("workers").once("value", snap => {
-    snap.forEach(w => {
-      let data = w.val();
-      if(JSON.stringify(data.villages).includes(currentPath)){
-        document.getElementById("list").innerHTML += `
-        <div class="worker-card flex justify-between items-center">
-            <div><p class="font-bold">${data.name}</p><p class="text-orange-600 text-sm">${data.work}</p></div>
-            <a href="tel:${data.phone}" class="bg-green-600 text-white p-3 rounded-full">📞</a>
-        </div>`;
-      }
-    });
+  let vList = vInput.split(",");
+  let vObj = {};
+  vList.forEach(v => {
+    let path = (selected.state+"/"+selected.district+"/"+selected.panchayat+"/"+v.trim()).replace(/\./g, '_');
+    vObj[path] = true;
   });
+
+  db.ref("workers/" + id).set({ name, work: document.getElementById("work").value, phone, villages: vObj })
+  .then(() => { alert("सेव हो गया!"); showOptions(); });
 }
 
-// --- 6. Admin Management Logic ---
-function manageStateAdmin(s) {
-    document.getElementById("app").innerHTML = `
-        <h2 class="font-bold mb-4">${s} - एडमिन कंट्रोल</h2>
-        <div class="bg-gray-100 p-4 rounded-xl mb-4">
-            <p class="text-xs uppercase font-bold text-gray-400">State Head</p>
-            <input id="admEmail" placeholder="Email"><input id="admPass" placeholder="Password">
-            <button onclick="createAdminAcc('STATE_ADMIN', '${s}')" class="btn-main">Appoint State Admin</button>
-        </div>
-        <input id="dist" placeholder="जिला का नाम लिखे">
-        <button onclick="pickDist()" class="btn-main bg-black">Manage District</button>
-    `;
-}
-
-function manageDistrictAdmin(d) {
-    document.getElementById("app").innerHTML = `
-        <h2 class="font-bold mb-4">${d} - जिला कंट्रोल</h2>
-        <div class="bg-gray-100 p-4 rounded-xl mb-4">
-            <p class="text-xs uppercase font-bold text-gray-400">District Head</p>
-            <input id="admEmail" placeholder="Email"><input id="admPass" placeholder="Password">
-            <button onclick="createAdminAcc('DIST_ADMIN', '${d}')" class="btn-main">Appoint District Admin</button>
-        </div>
-        <h4 class="font-bold mb-2">Workers List (For Ban)</h4>
-        <div id="banList">Loading...</div>
-    `;
-    loadBanList(d);
-}
-
-function createAdminAcc(role, loc) {
-    let email = document.getElementById("admEmail").value;
-    let pass = document.getElementById("admPass").value;
-    db.ref("adminAccounts/" + Date.now()).set({ email, password: pass, role, state: selected.state, dist: loc });
-    alert(role + " Appointed!");
-}
-
-function loadBanList(d) {
+function customerView() {
+    document.getElementById("app").innerHTML = `<h3 class="font-bold mb-4">ग्राम साथी लिस्ट</h3><div id="list" class="space-y-4"></div>`;
+    let currentPath = (selected.state+"/"+selected.district+"/"+selected.panchayat+"/"+selected.village).replace(/\./g, '_');
     db.ref("workers").once("value", snap => {
-        let h = "";
         snap.forEach(w => {
-            if(JSON.stringify(w.val().villages).includes(d)) {
-                h += `<div class="flex justify-between p-2 border-b"><span>${w.val().name}</span><button onclick="ban('${w.key}')" class="text-red-500 font-bold">BAN</button></div>`;
+            let data = w.val();
+            if(JSON.stringify(data.villages).includes(currentPath)){
+                document.getElementById("list").innerHTML += `<div class="p-4 border rounded-xl flex justify-between items-center bg-white shadow-sm"><div><p class="font-bold">${data.name}</p><p class="text-orange-600 text-sm">${data.work}</p></div><a href="tel:${data.phone}" class="bg-green-600 text-white p-3 rounded-full">📞</a></div>`;
             }
         });
-        document.getElementById("banList").innerHTML = h || "No workers";
     });
 }
-function ban(id) { if(confirm("Ban karein?")) db.ref("workers/"+id).remove(); }
 
 showStates();
 </script>
