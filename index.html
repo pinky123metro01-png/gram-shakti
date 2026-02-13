@@ -81,29 +81,39 @@
         <img src="1770902092682 (2).png" alt="Install App" style="width: 100%; max-width: 480px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
     </a>
 </div>
-  
-// 1. बैक बटन का दिमाग (नया फंक्शन)
+<script>
+// 1. डेटा स्टोर करने के लिए वेरिएबल
+let userFlow = {
+    jila: '',
+    panchayat: '',
+    village: ''
+};
+
+// 2. बैक बटन का दिमाग (Step-by-Step पीछे जाने के लिए)
 function goBack() {
     if (document.getElementById('villSelect') || document.getElementById('villInp')) {
         showPanchayatStep();
     } else if (document.getElementById('panchSelect') || document.getElementById('panchInp')) {
         showDistrictStep();
     } else {
-        location.reload(); // शुरू में ले जाए
+        location.reload(); 
     }
 }
 
-// 2. जिला चुनने वाला फंक्शन (Drop-down के साथ)
+// 3. जिला चुनने वाला फंक्शन (Drop-down के साथ)
 function showDistrictStep() {
-    let container = document.getElementById('step-container');
-    container.innerHTML = `<h3>अपना जिला चुनें</h3>
-        <select id="distSelect" class="dropdown-select" onchange="userFlow.jila = this.value">
+    let container = document.getElementById('app-container');
+    container.innerHTML = `
+        <h1 class="header-logo" style="text-align:center;">ग्राम शक्ति</h1>
+        <h3>अपना जिला चुनें</h3>
+        <select id="distSelect" class="dropdown-select" onchange="userFlow.jila = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुराना जिला चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('distInp').style.display='block'; this.style.display='none'">+ मेरा जिला नया है (यहाँ लिखें)</div>
+        <div class="add-new-btn" onclick="document.getElementById('distInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा जिला नया है (यहाँ लिखें)</div>
         <input type="text" id="distInp" placeholder="नये जिले का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
-        <button onclick="saveDistrict()" class="btn">आगे बढ़ें</button>`;
+        <button onclick="saveDistrict()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">आगे बढ़ें</button>`;
 
+    // Firebase से पुराने जिलों की लिस्ट लोड करना
     firebase.database().ref('users/').once('value', (snapshot) => {
         let distSet = new Set();
         snapshot.forEach(child => { if(child.val().jila) distSet.add(child.val().jila); });
@@ -119,16 +129,17 @@ function saveDistrict() {
     showPanchayatStep();
 }
 
-// 3. पंचायत चुनने वाला फंक्शन
+// 4. पंचायत चुनने वाला फंक्शन
 function showPanchayatStep() {
-    let container = document.getElementById('step-container');
-    container.innerHTML = `<h3>अपनी पंचायत चुनें</h3>
-        <select id="panchSelect" class="dropdown-select" onchange="userFlow.panchayat = this.value">
+    let container = document.getElementById('app-container');
+    container.innerHTML = `
+        <h3>अपनी पंचायत चुनें</h3>
+        <select id="panchSelect" class="dropdown-select" onchange="userFlow.panchayat = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुरानी पंचायत चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('panchInp').style.display='block'; this.style.display='none'">+ मेरी पंचायत नई है (यहाँ लिखें)</div>
+        <div class="add-new-btn" onclick="document.getElementById('panchInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरी पंचायत नई है (यहाँ लिखें)</div>
         <input type="text" id="panchInp" placeholder="नयी पंचायत का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
-        <button onclick="savePanchayat()" class="btn">आगे बढ़ें</button>`;
+        <button onclick="savePanchayat()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">आगे बढ़ें</button>`;
 
     firebase.database().ref('users/').once('value', (snapshot) => {
         let panchSet = new Set();
@@ -147,16 +158,17 @@ function savePanchayat() {
     showVillageStep();
 }
 
-// 4. गाँव चुनने वाला फंक्शन
+// 5. गाँव चुनने वाला फंक्शन
 function showVillageStep() {
-    let container = document.getElementById('step-container');
-    container.innerHTML = `<h3>अपना गाँव चुनें</h3>
-        <select id="villSelect" class="dropdown-select" onchange="userFlow.village = this.value">
+    let container = document.getElementById('app-container');
+    container.innerHTML = `
+        <h3>अपना गाँव चुनें</h3>
+        <select id="villSelect" class="dropdown-select" onchange="userFlow.village = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुराना गाँव चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('villInp').style.display='block'; this.style.display='none'">+ मेरा गाँव नया है (यहाँ लिखें)</div>
+        <div class="add-new-btn" onclick="document.getElementById('villInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा गाँव नया है (यहाँ लिखें)</div>
         <input type="text" id="villInp" placeholder="नये गाँव का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
-        <button onclick="saveVillage()" class="btn">डाटा सुरक्षित करें</button>`;
+        <button onclick="saveVillage()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">डाटा सुरक्षित करें</button>`;
 
     firebase.database().ref('users/').once('value', (snapshot) => {
         let villSet = new Set();
