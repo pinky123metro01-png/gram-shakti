@@ -40,8 +40,31 @@
     font-size: 22px; font-weight: bold; cursor: pointer; 
   }
   .header-logo { font-family: 'Poppins', sans-serif; font-weight: 700; color: #f97316; font-size: 2rem; }
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #2563eb; /* नीला रंग जो आपके लोगो से मैच करेगा */
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 22px;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 </style>
 </head>
+  <a href="javascript:history.back()" class="back-btn">
+    &#8592;
+  </a>
+  <a href="javascript:history.back()" class="back-btn">
+    &#8592;
+</a>
 <body>
 
   <div style="text-align: center; margin: 15px 0;">
