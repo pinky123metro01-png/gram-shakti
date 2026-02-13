@@ -96,14 +96,38 @@ let userFlow = { state: '', jila: '', panchayat: '', village: '', role: '', serv
 
 // 2. बैक बटन - जो हर कदम पर साथ देगा
 function goBack() {
-    if (document.getElementById('list-container') || document.getElementById('reg-form')) showServiceList();
-    else if (document.getElementById('service-list-page')) showRoleSelection();
-    else if (document.getElementById('role-page')) showVillageStep();
-    else if (document.getElementById('vill-page')) showPanchayatStep(); // यहाँ सुधार किया है
-    else if (document.getElementById('panch-page')) showDistrictStep();
-    else if (document.getElementById('dist-page')) showStates();
-    else location.reload();
+    console.log("Back button clicked"); // इससे पता चलेगा बटन दब रहा है
+
+    // 1. अगर लिस्ट या रजिस्ट्रेशन फॉर्म पर हैं, तो सर्विस लिस्ट पर जाएँ
+    if (document.getElementById('list-container') || document.getElementById('reg-form')) {
+        showServiceList();
+    } 
+    // 2. अगर सर्विस लिस्ट पर हैं, तो रोल सिलेक्शन (Worker/Customer) पर जाएँ
+    else if (document.getElementById('service-list-page')) {
+        showRoleSelection();
+    } 
+    // 3. अगर रोल वाले पेज पर हैं, तो गाँव वाले पेज पर जाएँ
+    else if (document.getElementById('role-page')) {
+        showVillageStep();
+    } 
+    // 4. अगर गाँव वाले पेज पर हैं, तो पंचायत वाले पेज पर जाएँ
+    else if (document.getElementById('vill-page')) {
+        showPanchayatStep();
+    } 
+    // 5. अगर पंचायत वाले पेज पर हैं, तो जिला वाले पेज पर जाएँ
+    else if (document.getElementById('panch-page')) {
+        showDistrictStep();
+    } 
+    // 6. अगर जिला वाले पेज पर हैं, तो राज्यों (Home) पर जाएँ
+    else if (document.getElementById('dist-page')) {
+        showStates();
+    } 
+    // 7. अगर राज्यों वाले पेज पर हैं, तो ऐप रीलोड करें
+    else {
+        location.reload();
+    }
 }
+
 
 // 3. 10 राज्यों का शानदार Dual-Tone डिजाइन
 function showStates() {
