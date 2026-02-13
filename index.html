@@ -82,41 +82,59 @@
     </a>
 </div>
 <script>
-// 1. डेटा स्टोर करने के लिए वेरिएबल
-let userFlow = {
-    jila: '',
-    panchayat: '',
-    village: ''
+// Firebase Config (यहाँ आपका अपना पुराना वाला config कोड रहेगा)
+const firebaseConfig = {
+  apiKey: "AIzaSyCuvev3-jwZwQuO_fHYyv2E2ovLny4Lh8Q",
+  authDomain: "gram-shakti-b135a.firebaseapp.com",
+  databaseURL: "https://gram-shakti-b135a-default-rtdb.firebaseio.com",
+  projectId: "gram-shakti-b135a"
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// 2. बैक बटन का दिमाग (Step-by-Step पीछे जाने के लिए)
+// डेटा स्टोर करने के लिए वेरिएबल
+let userFlow = { state: '', jila: '', panchayat: '', village: '' };
+
+// 1. बैक बटन का दिमाग
 function goBack() {
-    if (document.getElementById('villSelect') || document.getElementById('villInp')) {
-        showPanchayatStep();
+    if (document.getElementById('distSelect') || document.getElementById('distInp')) {
+        showStates();
     } else if (document.getElementById('panchSelect') || document.getElementById('panchInp')) {
         showDistrictStep();
+    } else if (document.getElementById('villSelect') || document.getElementById('villInp')) {
+        showPanchayatStep();
     } else {
         location.reload(); 
     }
 }
 
-// 3. जिला चुनने वाला फंक्शन (Drop-down के साथ)
+// 2. मुख्य स्क्रीन - राज्यों की लिस्ट (इसे वापस ला दिया गया है)
+function showStates() {
+    const states = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
+    let container = document.getElementById('app-container');
+    let html = `<h1 class="header-logo" style="text-align:center;">ग्राम शक्ति</h1><h3>अपना राज्य चुनें</h3><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; max-height:300px; overflow-y:auto; padding:10px;">`;
+    states.forEach(s => {
+        html += `<div onclick="userFlow.state='${s}'; showDistrictStep()" style="border:1px solid #ccc; padding:10px; border-radius:8px; cursor:pointer; text-align:center; background:white;">${s}</div>`;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+// 3. जिला चुनने वाला फंक्शन
 function showDistrictStep() {
     let container = document.getElementById('app-container');
     container.innerHTML = `
-        <h1 class="header-logo" style="text-align:center;">ग्राम शक्ति</h1>
-        <h3>अपना जिला चुनें</h3>
+        <h3>अपना जिला चुनें (${userFlow.state})</h3>
         <select id="distSelect" class="dropdown-select" onchange="userFlow.jila = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुराना जिला चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('distInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा जिला नया है (यहाँ लिखें)</div>
+        <div onclick="document.getElementById('distInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा जिला नया है (यहाँ लिखें)</div>
         <input type="text" id="distInp" placeholder="नये जिले का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
         <button onclick="saveDistrict()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">आगे बढ़ें</button>`;
 
-    // Firebase से पुराने जिलों की लिस्ट लोड करना
-    firebase.database().ref('users/').once('value', (snapshot) => {
+    db.ref('users/').once('value', (snapshot) => {
         let distSet = new Set();
-        snapshot.forEach(child => { if(child.val().jila) distSet.add(child.val().jila); });
+        snapshot.forEach(child => { if(child.val().state === userFlow.state && child.val().jila) distSet.add(child.val().jila); });
         let select = document.getElementById('distSelect');
         distSet.forEach(d => { select.innerHTML += `<option value="${d}">${d}</option>`; });
     });
@@ -133,15 +151,15 @@ function saveDistrict() {
 function showPanchayatStep() {
     let container = document.getElementById('app-container');
     container.innerHTML = `
-        <h3>अपनी पंचायत चुनें</h3>
+        <h3>अपनी पंचायत चुनें (${userFlow.jila})</h3>
         <select id="panchSelect" class="dropdown-select" onchange="userFlow.panchayat = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुरानी पंचायत चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('panchInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरी पंचायत नई है (यहाँ लिखें)</div>
+        <div onclick="document.getElementById('panchInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरी पंचायत नई है (यहाँ लिखें)</div>
         <input type="text" id="panchInp" placeholder="नयी पंचायत का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
         <button onclick="savePanchayat()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">आगे बढ़ें</button>`;
 
-    firebase.database().ref('users/').once('value', (snapshot) => {
+    db.ref('users/').once('value', (snapshot) => {
         let panchSet = new Set();
         snapshot.forEach(child => { 
             if(child.val().jila === userFlow.jila && child.val().panchayat) panchSet.add(child.val().panchayat); 
@@ -166,11 +184,11 @@ function showVillageStep() {
         <select id="villSelect" class="dropdown-select" onchange="userFlow.village = this.value" style="width:90%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
             <option value="">-- पुराना गाँव चुनें --</option>
         </select>
-        <div class="add-new-btn" onclick="document.getElementById('villInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा गाँव नया है (यहाँ लिखें)</div>
+        <div onclick="document.getElementById('villInp').style.display='block'; this.style.display='none'" style="cursor:pointer; color:blue; font-size:13px; margin-bottom:10px;">+ मेरा गाँव नया है (यहाँ लिखें)</div>
         <input type="text" id="villInp" placeholder="नये गाँव का नाम लिखें" style="display:none; width:85%; padding:10px; margin:10px auto; border-radius:8px; border:1px solid #ccc;">
         <button onclick="saveVillage()" class="btn" style="width:90%; padding:12px; background:#2563eb; color:white; border:none; border-radius:8px; margin-top:10px; font-weight:bold;">डाटा सुरक्षित करें</button>`;
 
-    firebase.database().ref('users/').once('value', (snapshot) => {
+    db.ref('users/').once('value', (snapshot) => {
         let villSet = new Set();
         snapshot.forEach(child => { 
             if(child.val().panchayat === userFlow.panchayat && child.val().village) villSet.add(child.val().village); 
@@ -184,48 +202,18 @@ function saveVillage() {
     let inp = document.getElementById('villInp').value;
     if(inp) userFlow.village = inp;
     if(!userFlow.village) { alert("कृपया गाँव चुनें या लिखें"); return; }
-    save(); // यह आपके असली सेव फंक्शन को कॉल करेगा
+    saveData(); 
 }
 
-function save() {
-  const name = document.getElementById("n").value;
-  const ph = document.getElementById("p").value;
-  const wk = document.getElementById("w").value;
-  db.ref("workers").push({
-    name, phone: ph, work: wk,
-    location: `${userFlow.state}/${userFlow.district}/${userFlow.panchayat}/${userFlow.village}`
-  }).then(() => { alert("सफल!"); showOptions(); });
-}
-
-function showView() {
-  document.getElementById("app-container").innerHTML = `
-    <h1 class="header-logo text-center mb-4">गाँव की शक्ति</h1>
-    <div id="list" class="space-y-3 max-h-[300px] overflow-y-auto"></div>
-    <button onclick="showOptions()" class="mt-4 text-gray-400 text-sm w-full">पीछे जाएँ</button>
-  `;
-  const path = `${userFlow.state}/${userFlow.district}/${userFlow.panchayat}/${userFlow.village}`;
-  db.ref("workers").on("value", snap => {
-    let h = "";
-    snap.forEach(c => {
-      const d = c.val();
-      if(d.location === path) h += `<div class="p-3 border rounded-xl flex justify-between items-center shadow-sm">
-        <div><p class="font-bold">${d.name}</p><p class="text-orange-600 text-sm">${d.work}</p></div>
-        <a href="tel:${d.phone}" class="bg-green-500 text-white p-2 rounded-full">📞</a>
-      </div>`;
+// 6. डेटा सेव फंक्शन
+function saveData() {
+    db.ref('users/').push(userFlow).then(() => {
+        alert("सफलतापूर्वक सुरक्षित किया गया!");
+        location.reload();
     });
-    document.getElementById("list").innerHTML = h || "कोई नहीं मिला";
-  });
 }
 
-function showAdmin() {
-  document.getElementById("app-container").innerHTML = `<h2 class="text-xl font-bold mb-4">Admin</h2><div id="al" class="space-y-2"></div>`;
-  db.ref("workers").on("value", snap => {
-    let h = "";
-    snap.forEach(c => { h += `<div class="p-2 border flex justify-between text-xs">${c.val().name} <button onclick="db.ref('workers/${c.key}').remove()" class="text-red-500">Del</button></div>`; });
-    document.getElementById("al").innerHTML = h;
-  });
-}
-
+// ऐप शुरू होते ही राज्यों को दिखाओ
 showStates();
 </script>
 </body>
