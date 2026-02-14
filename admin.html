@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ग्राम शक्ति - एडमिन कंट्रोल</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        .login-screen { max-width: 400px; margin: 80px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        input { width: 90%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; }
+        .btn-black { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .admin-header { background: #000; color: #f97316; padding: 15px; border-radius: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; border-left: 5px solid #f97316; }
+    </style>
+</head>
+<body>
+
+<div id="login-section">
+    <div class="login-screen">
+        <h2 style="color:#f97316;">एडमिन लॉगिन</h2>
+        <input type="text" id="userTag" placeholder="ID (जैसे: main_boss)">
+        <input type="password" id="userPass" placeholder="पासवर्ड">
+        <button class="btn-black" onclick="handleLogin()">प्रवेश करें</button>
+    </div>
+</div>
+
+<div id="dashboard-section" style="display:none;">
+    <div class="admin-header">
+        <div><h3 id="display-name" style="margin:0;">-</h3><small id="display-role"></small></div>
+        <button onclick="location.reload()" style="background:#f97316; border:none; color:white; border-radius:8px; padding:5px 15px;">Logout</button>
+    </div>
+
+    <div id="master-controls" style="display:none; background:#fff; padding:15px; border-radius:15px; margin-bottom:20px; border:2px solid #000;">
+        <h4>नया एडमिन बनाएँ</h4>
+        <input type="text" id="newAdminID" placeholder="New ID">
+        <input type="password" id="newAdminPass" placeholder="Password">
+        <input type="text" id="newAdminArea" placeholder="Area (eg: Uttar Pradesh)">
+        <button onclick="createAdmin()" style="background:green; color:white; border:none; padding:10px; width:100%; border-radius:10px;">एडमिन जोड़े</button>
+    </div>
+
+    <div id="data-list">डेटा लोड हो रहा है...</div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCuvev3-jwZwQuO_fHYyv2E2ovLny4Lh8Q",
+  authDomain: "gram-shakti-b135a.firebaseapp.com",
+  databaseURL: "https://gram-shakti-b135a-default-rtdb.firebaseio.com",
+  projectId: "gram-shakti-b135a"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let loggedInAdmin = null;
+
+function handleLogin() {
+    const id = document.getElementById('userTag').value;
+    const pass = document.getElementById('userPass').value;
+
+    if(id === "main_boss" && pass === "master99") {
+        loggedInAdmin = { id: "Master", role: "MASTER", area: "ALL" };
+        showDashboard();
+    } else {
+        db.ref('admins/' + id).once('value', snap => {
+            const data = snap.val();
+            if(data && data.password === pass) {
+                loggedInAdmin = { id: id, role: "SUB", area: data.area };
+                showDashboard();
+            } else { alert("गलत आईडी या पासवर्ड!"); }
+        });
+    }
+}
+
+function showDashboard() {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard-section').style.display = 'block';
+    document.getElementById('display-name').innerText = loggedInAdmin.id;
+    document.getElementById('display-role').innerText = "एरिया: " + loggedInAdmin.area;
+    if(loggedInAdmin.role === "MASTER") document.getElementById('master-controls').style.display = 'block';
+    loadAppData();
+}
+
+function createAdmin() {
+    const id = document.getElementById('newAdminID').value;
+    const pass = document.getElementById('newAdminPass').value;
+    const area = document.getElementById('newAdminArea').value;
+    if(!id || !pass) return;
+    db.ref('admins/' + id).set({ password: pass, area: area }).then(() => alert("एडमिन बना दिया गया!"));
+}
+
+function loadAppData() {
+    db.ref('users/').on('value', snap => {
+        let html = '';
+        snap.forEach(child => {
+            let d = child.val();
+            if(d.role === 'worker') {
+                if(loggedInAdmin.area === "ALL" || d.state === loggedInAdmin.area || d.jila === loggedInAdmin.area) {
+                    html += `<div class="card">
+                        <b>${d.workerName}</b> [${d.service}]<br>
+                        <small>${d.state} > ${d.jila} > ${d.village}</small><br>
+                        <button onclick="db.ref('users/${child.key}').remove()" style="color:red; background:none; border:none; cursor:pointer; position:absolute; right:10px; top:10px;">हटाएं</button>
+                    </div>`;
+                }
+            }
+        });
+        document.getElementById('data-list').innerHTML = html || "कोई डेटा नहीं है।";
+    });
+}
+</script>
+</body>
+</html>
