@@ -95,16 +95,15 @@ let userFlow = { state: '', jila: '', panchayat: '', village: '', role: '', serv
 
 // 2. बैक बटन - जो हर कदम पर साथ देगा
 function goBack() {
-    console.log("Back button clicked"); // इससे पता चलेगा बटन दब रहा है
+    if (document.getElementById('list-container') || document.getElementById('reg-form')) showServiceList();
+    else if (document.getElementById('service-list-page')) showRoleSelection();
+    else if (document.getElementById('role-page')) showVillageStep();
+    else if (document.getElementById('vill-page')) showPanchayatStep();
+    else if (document.getElementById('panch-page')) showDistrictStep();
+    else if (document.getElementById('dist-page')) showStates();
+    else location.reload();
+}
 
-    // 1. अगर लिस्ट या रजिस्ट्रेशन फॉर्म पर हैं, तो सर्विस लिस्ट पर जाएँ
-    if (document.getElementById('list-container') || document.getElementById('reg-form')) {
-        showServiceList();
-    } 
-    // 2. अगर सर्विस लिस्ट पर हैं, तो रोल सिलेक्शन (Worker/Customer) पर जाएँ
-    else if (document.getElementById('service-list-page')) {
-        showRoleSelection();
-    } 
     // 3. अगर रोल वाले पेज पर हैं, तो गाँव वाले पेज पर जाएँ
     else if (document.getElementById('role-page')) {
         showVillageStep();
@@ -187,17 +186,35 @@ function saveDistrict() {
 // 5. पंचायत चयन (Firebase से ऑटो-लोड)
 function showPanchayatStep() {
     let container = document.getElementById('app-container');
+    function showVillageStep() {
+    let container = document.getElementById('app-container');
     container.innerHTML = `
-        <div id="panch-page" style="padding:20px;">
-            <h3 style="color:#f97316;">${userFlow.jila}</h3>
-            <p>पंचायत चुनें या नई लिखें:</p>
-            <select id="panchSelect" style="width:100%; padding:15px; border-radius:12px; border:2px solid #f97316; margin:15px 0;">
-                <option value="">-- पुरानी पंचायतें --</option>
+        <div id="vill-page" style="padding:20px;">
+            <h3 style="color:#f97316;">${userFlow.panchayat} > गाँव चुनें</h3>
+            <select id="villSelect" style="width:100%; padding:15px; border-radius:12px; border:2px solid #f97316; margin-bottom:15px; font-size:16px;">
+                <option value="">-- पुराने गाँव चुनें --</option>
             </select>
-            <input type="text" id="panchInp" placeholder="+ नई पंचायत जोड़ें" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ccc;">
-            <button onclick="savePanchayat()" style="width:100%; padding:18px; background:#000; color:white; border:none; border-radius:15px; font-weight:bold; margin-top:20px;">आगे बढ़ें</button>
+            <div onclick="document.getElementById('villInp').style.display='block'; this.style.display='none'" 
+                 style="color:#2563eb; margin-bottom:10px; cursor:pointer; font-weight:bold;">+ नया गाँव जोड़ें</div>
+            <input type="text" id="villInp" placeholder="गाँव का नाम यहाँ लिखें" style="display:none; width:100%; padding:15px; border-radius:12px; border:1px solid #ccc; margin-bottom:15px;">
+            <button onclick="saveVillage()" style="width:100%; padding:18px; background:#000; color:white; border:none; border-radius:15px; font-weight:bold; font-size:18px;">आगे बढ़ें</button>
         </div>`;
-    
+
+    db.ref('users/').once('value', snap => {
+        let set = new Set();
+        snap.forEach(c => { if(c.val().panchayat === userFlow.panchayat) set.add(c.val().village); });
+        let sel = document.getElementById('villSelect');
+        set.forEach(v => { if(v) sel.innerHTML += `<option value="${v}">${v}</option>`; });
+    });
+}
+
+function saveVillage() {
+    let val = document.getElementById('villInp').value || document.getElementById('villSelect').value;
+    if(!val) { alert("गाँव चुनें या लिखें"); return; }
+    userFlow.village = val;
+    showRoleSelection();
+}
+
     db.ref('users/').once('value', snap => {
         let set = new Set();
         snap.forEach(c => { if(c.val().jila === userFlow.jila) set.add(c.val().panchayat); });
