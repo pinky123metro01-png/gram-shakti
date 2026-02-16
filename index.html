@@ -4,69 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ग्राम शक्ति - डिजिटल सेवा</title>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
-        body { 
-            font-family: 'Noto Sans Devanagari', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80');
-            background-size: cover; background-attachment: fixed;
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 10px;
-        }
-        .app-card {
-            background: rgba(255, 255, 255, 0.95); width: 100%; max-width: 480px; 
-            padding: 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px); margin: 10px 0;
-        }
-        .ad-box {
-            width: 100%; max-width: 480px; height: 80px; 
-            background: #fff; border-radius: 15px; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #f97316;
-        }
+        body { font-family: 'Noto Sans Devanagari', sans-serif; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-attachment: fixed; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        .app-card { background: rgba(255, 255, 255, 0.95); width: 100%; max-width: 480px; padding: 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); backdrop-filter: blur(10px); margin: 10px 0; }
+        .ad-box { width: 100%; max-width: 480px; height: 80px; background: #fff; border-radius: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #f97316; cursor:pointer; }
         .ad-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .btn-main {
-            width: 100%; padding: 15px; background: #f97316; color: white; 
-            border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer;
-            margin-top: 10px; border: none;
-        }
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; }
+        .btn-main { width: 100%; padding: 15px; background: #f97316; color: white; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; border: none; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; color: #000; }
+        .list-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 6px solid #16a34a; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #333; }
     </style>
 </head>
 <body>
 
-    <div class="ad-box" id="top-ad">
-        <img src="https://via.placeholder.com/480x80?text=यहाँ+अपनी+फोटो+लगाएँ" alt="Advertisement">
+    <div class="ad-box" onclick="contactAdmin()">
+        <img src="1770902092682 (1).png" onerror="this.src='https://via.placeholder.com/480x80?text=Top+Advertisement'">
     </div>
 
     <div class="app-card" id="main-container">
-        <div id="home-content">
-            <h1 style="color:#f97316; text-align:center; font-size:30px; font-weight:bold;">ग्राम शक्ति</h1>
-            <p style="text-align:center; color:#555; margin-bottom:20px;">गाँव का अपना बाज़ार</p>
-            
-            <button class="btn-main" onclick="showStateSelection()">🔎 सेवा खोजें</button>
-            <button class="btn-main" style="background:#1a1a1a;" onclick="showRegistration()">📢 अपना काम जोड़ें</button>
-
-            <div style="margin-top:30px; padding:12px; background:#f0f9ff; border-radius:15px; text-align:center;">
-                <button onclick="contactAdmin()" style="background:#25d366; color:white; width:100%; padding:10px; border-radius:10px; font-weight:bold; border:none;">
-                    💬 एडमिन से संपर्क करें
-                </button>
-            </div>
+        <div id="content-area">
+            <h1 class="text-3xl font-bold text-center text-orange-600">ग्राम शक्ति</h1>
+            <p class="text-center text-gray-600 mb-6">गाँव का हुनर, शहर का बाज़ार</p>
+            <button class="btn-main" onclick="showLocationStep('search')">🔎 वर्कर/सामान ढूँढें</button>
+            <button class="btn-main" style="background:#1a1a1a" onclick="showLocationStep('reg')">📢 अपना काम जोड़ें</button>
+            <button class="btn-main" style="background:#2563eb" onclick="contactAdmin()">💬 एडमिन से संपर्क</button>
         </div>
     </div>
 
-    <div class="ad-box" id="bottom-ad">
-        <img src="https://via.placeholder.com/480x80?text=यहाँ+अपनी+फोटो+लगाएँ" alt="Advertisement">
+    <div class="ad-box" onclick="contactAdmin()">
+        <img src="1770902092682 (2).png" onerror="this.src='https://via.placeholder.com/480x80?text=Bottom+Advertisement'">
     </div>
 
 <script>
-// Firebase Setup
 const firebaseConfig = {
     apiKey: "AIzaSyCuvev3-jwZwQuO_fHYyv2E2ovLny4Lh8Q",
     authDomain: "gram-shakti-b135a.firebaseapp.com",
@@ -76,17 +48,103 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// प्राइवेसी के साथ व्हाट्सएप (आपका नंबर)
+let temp = { mode: '', village: '', service: '' };
+
 function contactAdmin() {
-    window.open(`https://wa.me/919784499059?text=नमस्ते%20रवि%20भाई,%20विज्ञापन%20के%20लिए%20संपर्क%20किया%20है।`, '_blank');
+    window.open(`https://wa.me/919784499059?text=नमस्ते रवि भाई, विज्ञापन के लिए संपर्क किया है।`, '_blank');
 }
 
-// बाकी के फंक्शन्स (State, Location, Search) यहाँ रहेंगे जैसा पहले था...
-function showStateSelection() {
-    const states = ['Uttar Pradesh', 'Bihar', 'Rajasthan', 'Madhya Pradesh', 'Haryana'];
-    let html = `<h2 class="font-bold mb-4">राज्य चुनें:</h2>`;
-    states.forEach(s => { html += `<button class="btn-main" style="background:#333;" onclick="showReg()">${s}</button>`; });
-    document.getElementById('main-container').innerHTML = html;
+// Step 1: लोकेशन पूछना (यही गाँव डेटा फिल्टर करेगा)
+function showLocationStep(mode) {
+    temp.mode = mode;
+    document.getElementById('content-area').innerHTML = `
+        <h2 class="text-xl font-bold mb-4">लोकेशन भरें</h2>
+        <input type="text" id="vName" placeholder="अपने गाँव या शहर का नाम">
+        <button class="btn-main" onclick="saveLoc()">आगे बढ़ें</button>
+        <button class="mt-4 text-blue-600" onclick="location.reload()">← वापस</button>
+    `;
+}
+
+function saveLoc() {
+    temp.village = document.getElementById('vName').value.trim().toLowerCase();
+    if(!temp.village) return alert("गाँव का नाम लिखें");
+    showServiceStep();
+}
+
+// Step 2: सर्विस चुनना
+function showServiceStep() {
+    const services = ['मिस्त्री', 'इलेक्ट्रीशियन', 'JCB/ट्रैक्टर', 'डेयरी/दूध', 'किराना दुकान', 'मजदूर'];
+    let html = `<h2 class="text-xl font-bold mb-4">कैटेगरी चुनें</h2>`;
+    services.forEach(s => {
+        html += `<button class="btn-main" style="background:white; color:#333; border:1px solid #ddd" onclick="setService('${s}')">${s}</button>`;
+    });
+    document.getElementById('content-area').innerHTML = html;
+}
+
+function setService(s) {
+    temp.service = s;
+    if(temp.mode === 'search') fetchWorkers();
+    else showRegForm();
+}
+
+// Step 3: रजिस्ट्रेशन फॉर्म (डेटा सेव करने के लिए)
+function showRegForm() {
+    document.getElementById('content-area').innerHTML = `
+        <h2 class="text-xl font-bold mb-4">${temp.service} रजिस्ट्रेशन</h2>
+        <input type="text" id="wName" placeholder="आपका/दुकान का नाम">
+        <input type="tel" id="wPhone" placeholder="मोबाइल नंबर">
+        <select id="wDel"><option value="false">होम डिलीवरी नहीं</option><option value="true">होम डिलीवरी हाँ</option></select>
+        <button class="btn-main" onclick="saveToFirebase()">सेव करें</button>
+    `;
+}
+
+function saveToFirebase() {
+    let name = document.getElementById('wName').value;
+    let phone = document.getElementById('wPhone').value;
+    let del = document.getElementById('wDel').value;
+
+    if(!name || !phone) return alert("नाम और नंबर भरें");
+
+    db.ref('users/').push({
+        name: name,
+        phone: phone,
+        village: temp.village,
+        service: temp.service,
+        delivery: del,
+        role: 'worker'
+    }).then(() => {
+        alert("सफलतापूर्वक जुड़ गए!");
+        location.reload();
+    });
+}
+
+// Step 4: सर्च रिजल्ट्स (जो भरा गया है वही यहाँ दिखेगा)
+function fetchWorkers() {
+    document.getElementById('content-area').innerHTML = `<h2 class="text-xl font-bold mb-4">${temp.service} की लिस्ट</h2><div id="results">लोड हो रहा है...</div>`;
+    
+    db.ref('users/').once('value', snap => {
+        let html = "";
+        let count = 0;
+        snap.forEach(child => {
+            let d = child.val();
+            // फिल्टर: गाँव और सर्विस दोनों मैच होनी चाहिए
+            if(d.village === temp.village && d.service === temp.service) {
+                html += `
+                    <div class="list-item">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <b class="text-lg">${d.name}</b><br>
+                                <span class="text-sm">${d.delivery === 'true' ? '🚚 डिलीवरी उपलब्ध' : '🏠 दुकान पर'}</span>
+                            </div>
+                            <a href="tel:${d.phone}" class="bg-green-500 text-white p-2 rounded-full">📞</a>
+                        </div>
+                    </div>`;
+                count++;
+            }
+        });
+        document.getElementById('results').innerHTML = count > 0 ? html : "इस गाँव में अभी कोई उपलब्ध नहीं है।";
+        document.getElementById('content-area').innerHTML += `<button class="btn-main" style="background:#000" onclick="location.reload()">वापस</button>`;
+    });
 }
 </script>
 </body>
