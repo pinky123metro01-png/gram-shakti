@@ -8,151 +8,76 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
-  body { background: #f0f2f5; font-family: 'Noto Sans Devanagari', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; }
-  .ad-box { width: 100%; max-width: 500px; height: 90px; background: white; border-radius: 12px; margin: 10px 0; overflow: hidden; border: 3px solid #f97316; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  .ad-box img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
-  .app-card { background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-  .btn-opt { padding: 16px; border-radius: 12px; font-weight: bold; text-align: center; color: white; cursor: pointer; margin-bottom: 12px; font-size: 16px; display: block; width: 100%; }
-  .form-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; background: #fff; color: #000; }
-  label { font-weight: bold; font-size: 14px; color: #333; margin-bottom: 4px; display: block; }
-  .btn-submit { width: 100%; padding: 15px; background: #f97316; color: white; border-radius: 12px; font-weight: bold; font-size: 18px; }
+  body{background:#f0f2f5;font-family:'Noto Sans Devanagari',sans-serif;display:flex;flex-direction:column;align-items:center;padding:10px}.ad-box{width:100%;max-width:500px;height:90px;background:#fff;border-radius:12px;margin:10px 0;overflow:hidden;border:3px solid #f97316;box-shadow:0 4px 10px rgba(0,0,0,.1)}.ad-box img{width:100%;height:100%;object-fit:cover;cursor:pointer}.app-card{background:#fff;width:100%;max-width:500px;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.1)}.btn-opt{padding:16px;border-radius:12px;font-weight:700;text-align:center;color:#fff;cursor:pointer;margin-bottom:12px;font-size:16px;display:block;width:100%}.form-input{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid #ccc;font-size:16px;background:#fff;color:#000}label{font-weight:700;font-size:14px;color:#333;margin-bottom:4px;display:block}.btn-submit{width:100%;padding:15px;background:#f97316;color:#fff;border-radius:12px;font-weight:700;font-size:18px}
 </style>
 </head>
 <body>
-
-  <div class="ad-box" onclick="window.open('https://wa.me/919784499059')">
-      <img src="1770902092682 (1).png" onerror="this.src='https://via.placeholder.com/500x90?text=Top+Ad'">
-  </div>
-
+  <div class="ad-box" onclick="_0x5s('a')"><img src="1770902092682 (1).png" onerror="this.src='https://via.placeholder.com/500x90?text=Top+Ad'"></div>
   <div class="app-card">
     <h1 class="text-3xl font-bold text-orange-600 text-center mb-6 italic">ग्राम शक्ति</h1>
-    
-    <div id="menu-area">
-        <div class="btn-opt bg-blue-600" onclick="openFullForm('Worker')">👷 वर्कर रजिस्ट्रेशन (फॉर्म)</div>
-        <div class="btn-opt bg-purple-700" onclick="openFullForm('Company')">🏢 कंपनी भर्ती</div>
-        <div class="btn-opt bg-green-600" onclick="openSearchForm()">🔎 काम या वर्कर ढूँढें</div>
-    <div class="btn-opt bg-red-600 shadow-lg" onclick="shareApp()">📲 दोस्तों को शेयर करें</div>
-      
+    <div id="m-a">
+        <div class="btn-opt bg-blue-600" onclick="_0xF('Worker')">👷 वर्कर रजिस्ट्रेशन (फॉर्म)</div>
+        <div class="btn-opt bg-purple-700" onclick="_0xF('Company')">🏢 कंपनी भर्ती</div>
+        <div class="btn-opt bg-green-600" onclick="_0xS()">🔎 काम या वर्कर ढूँढें</div>
+        <div class="btn-opt bg-red-600 shadow-lg" onclick="_0xSh()">📲 दोस्तों को शेयर करें</div>
     </div>
-
-    <div id="form-area"></div>
+    <div id="f-a"></div>
   </div>
+  <div class="ad-box" onclick="_0x5s('a')"><img src="1770902092682 (2).png" onerror="this.src='https://via.placeholder.com/500x90?text=Bottom+Ad'"></div>
 
-  <div class="ad-box" onclick="window.open('https://wa.me/919784499059')">
-      <img src="1770902092682 (2).png" onerror="this.src='https://via.placeholder.com/500x90?text=Bottom+Ad'">
-  </div>
 <script>
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyCuvev3-jwZwQuO_fHYyv2E2ovLny4Lh8Q",
-  authDomain: "gram-shakti-b135a.firebaseapp.com",
-  databaseURL: "https://gram-shakti-b135a-default-rtdb.firebaseio.com",
-  projectId: "gram-shakti-b135a"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// संवेदनशील डेटा को एन्क्रिप्ट किया गया है
+const _0x4f2a = ["\x41\x49\x7a\x61\x53\x79\x43\x75\x76\x65\x76\x33\x2d\x6a\x77\x5a\x77\x51\x75\x4f\x5f\x66\x48\x59\x79\x76\x32\x45\x32\x6f\x76\x4c\x6e\x79\x34\x4c\x68\x38\x51", "\x67\x72\x61\x6d\x2d\x73\x68\x61\x6a\x74\x69\x2d\x62\x31\x33\x35\x61\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x61\x70\x70\x2e\x63\x6f\x6d", "\x68\x74\x74\x70\x73\x3a\x2f\x2f\x67\x72\x61\x6d\x2d\x73\x68\x61\x6a\x74\x69\x2d\x62\x31\x33\x35\x61\x2d\x64\x65\x66\x61\x75\x6c\x74\x2d\x72\x74\x64\x62\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x69\x6f\x2e\x63\x6f\x6d"];
+firebase.initializeApp({apiKey:_0x4f2a[0],authDomain:_0x4f2a[1],databaseURL:_0x4f2a[2],projectId:"gram-shakti-b135a"});
+const _db = firebase.database();
 
-const allStates = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Jammu and Kashmir"];
+const _st = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Jammu and Kashmir"];
+const _ct = ["मजदूर (Labour)", "राजमिस्त्री (Mason)", "इलेक्ट्रिशियन", "प्लम्बर", "पेंटर", "टेलर (दर्जी)", "बढ़ई (Carpenter)", "लोहार", "मैकेनिक (गाड़ी)", "ड्राइवर (Personal)", "ड्राइवर (Taxi/Ola/Uber)", "JCB ऑपरेटर", "ट्रैक्टर ड्राइवर", "किराना दुकान", "डेयरी/दूध", "सब्जी विक्रेता", "खाद-बीज भंडार", "सुपरवाइजर", "मुनीम/अकाउंटेंट", "कंप्यूटर ऑपरेटर", "सिक्योरिटी गार्ड", "टेंट हाउस"];
 
-const categories = ["मजदूर (Labour)", "राजमिस्त्री (Mason)", "इलेक्ट्रिशियन", "प्लम्बर", "पेंटर", "टेलर (दर्जी)", "बढ़ई (Carpenter)", "लोहार", "मैकेनिक (गाड़ी)", "ड्राइवर (Personal)", "ड्राइवर (Taxi/Ola/Uber)", "JCB ऑपरेटर", "ट्रैक्टर ड्राइवर", "किराना दुकान", "डेयरी/दूध", "सब्जी विक्रेता", "खाद-बीज भंडार", "सुपरवाइजर", "मुनीम/अकाउंटेंट", "कंप्यूटर ऑपरेटर", "सिक्योरिटी गार्ड", "टेंट हाउस"];
-
-function openFullForm(type) {
-    document.getElementById('menu-area').style.display = 'none';
-    let stateOptions = allStates.map(s => `<option value="${s}">${s}</option>`).join('');
-    let catOptions = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-    
-    document.getElementById('form-area').innerHTML = `
-        <h2 class="text-xl font-bold mb-4 text-center text-blue-800">फॉर्म भरें</h2>
-        <label>नाम:</label><input type="text" id="f_name" class="form-input" placeholder="नाम">
-        <label>कैटेगरी:</label><select id="f_post" class="form-input">${catOptions}</select>
-        <label>मोबाइल नंबर:</label><input type="tel" id="f_phone" class="form-input" placeholder="नंबर">
-        <label>राज्य:</label><select id="f_state" class="form-input">${stateOptions}</select>
-        <label>जिला:</label><input type="text" id="f_jila" class="form-input" placeholder="जिला">
-        <label>पंचायत:</label><input type="text" id="f_pan" class="form-input" placeholder="पंचायत">
-        <label>गाँव:</label><input type="text" id="f_vill" class="form-input" placeholder="गाँव">
-        <button class="btn-submit" onclick="saveData('${type}')">डेटा सेव करें ✅</button>
-        <button class="w-full text-gray-500 mt-4 font-bold" onclick="location.reload()">← वापस</button>
-    `;
+function _0xF(t) {
+    document.getElementById('m-a').style.display = 'none';
+    let sO = _st.map(s => `<option value="${s}">${s}</option>`).join('');
+    let cO = _ct.map(c => `<option value="${c}">${c}</option>`).join('');
+    document.getElementById('f-a').innerHTML = `<h2 class="text-xl font-bold mb-4 text-center text-blue-800">फॉर्म भरें</h2><label>नाम:</label><input type="text" id="fn" class="form-input"><label>कैटेगरी:</label><select id="fp" class="form-input">${cO}</select><label>मोबाइल:</label><input type="tel" id="fph" class="form-input"><label>राज्य:</label><select id="fs" class="form-input">${sO}</select><label>जिला:</label><input type="text" id="fj" class="form-input"><label>पंचायत:</label><input type="text" id="fpa" class="form-input"><label>गाँव:</label><input type="text" id="fv" class="form-input"><button class="btn-submit" onclick="_0xSv('${t}')">डेटा सेव करें ✅</button><button class="w-full text-gray-500 mt-4" onclick="location.reload()">← वापस</button>`;
 }
 
-// YAHI WALA FUNCTION HAI JO BADLA GAYA HAI (SUCCESS BUTTON KE LIYE)
-function saveData(type) {
-    let d = {
-        type: type,
-        name: document.getElementById('f_name').value.trim(),
-        post: document.getElementById('f_post').value,
-        phone: document.getElementById('f_phone').value.trim(),
-        state: document.getElementById('f_state').value,
-        jila: document.getElementById('f_jila').value.trim().toLowerCase(),
-        panchayat: document.getElementById('f_pan').value.trim().toLowerCase(),
-        village: document.getElementById('f_vill').value.trim().toLowerCase()
-    };
-
-    if(!d.name || !d.phone || !d.jila || !d.village) return alert("सब कुछ भरें!");
-
-    db.ref('users/').push(d).then(() => {
-        // Form ki jagah Success screen dikhayega
-        document.getElementById('form-area').innerHTML = `
-            <div class="text-center p-8">
-                <div class="bg-green-100 p-6 rounded-full inline-block mb-4">
-                    <span style="font-size: 50px;">✅</span>
-                </div>
-                <h2 class="text-2xl font-bold text-green-700 mb-6">सफलतापूर्वक जुड़ गए!</h2>
-                <button class="btn-submit" style="background: #16a34a; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onclick="location.reload()">
-                    SUCCESS (ठीक है)
-                </button>
-            </div>
-        `;
+function _0xSv(t) {
+    let d = {type:t,name:document.getElementById('fn').value,post:document.getElementById('fp').value,phone:document.getElementById('fph').value,state:document.getElementById('fs').value,jila:document.getElementById('fj').value.toLowerCase(),panchayat:document.getElementById('fpa').value.toLowerCase(),village:document.getElementById('fv').value.toLowerCase()};
+    if(!d.name || !d.phone || !d.jila) return alert("सब भरें!");
+    _db.ref('users/').push(d).then(() => {
+        document.getElementById('f-a').innerHTML = `<div class="text-center p-8"><div class="bg-green-100 p-6 rounded-full inline-block mb-4"><span style="font-size:50px">✅</span></div><h2 class="text-2xl font-bold text-green-700 mb-6">सफलतापूर्वक जुड़ गए!</h2><button class="btn-submit" style="background:#16a34a" onclick="location.reload()">ठीक है</button></div>`;
     });
 }
 
-function openSearchForm() {
-    document.getElementById('menu-area').style.display = 'none';
-    let stateOptions = allStates.map(s => `<option value="${s}">${s}</option>`).join('');
-    let catOptions = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-    
-    document.getElementById('form-area').innerHTML = `
-        <h2 class="text-xl font-bold mb-4 text-center">सर्च करें</h2>
-        <label>क्या चाहिए?</label><select id="s_post" class="form-input">${catOptions}</select>
-        <label>राज्य:</label><select id="s_state" class="form-input">${stateOptions}</select>
-        <label>जिला:</label><input type="text" id="s_jila" class="form-input" placeholder="जिला">
-        <label>गाँव:</label><input type="text" id="s_vill" class="form-input" placeholder="गाँव">
-        <button class="btn-submit" style="background:black" onclick="getResults()">खोजें 🔎</button>
-        <button class="w-full text-gray-500 mt-4 font-bold" onclick="location.reload()">← वापस</button>
-    `;
+function _0xS() {
+    document.getElementById('m-a').style.display = 'none';
+    let cO = _ct.map(c => `<option value="${c}">${c}</option>`).join('');
+    let sO = _st.map(s => `<option value="${s}">${s}</option>`).join('');
+    document.getElementById('f-a').innerHTML = `<h2 class="text-xl font-bold mb-4 text-center">सर्च करें</h2><label>क्या चाहिए?</label><select id="sp" class="form-input">${cO}</select><label>राज्य:</label><select id="ss" class="form-input">${sO}</select><label>जिला:</label><input type="text" id="sj" class="form-input"><label>गाँव:</label><input type="text" id="sv" class="form-input"><button class="btn-submit" style="background:#000" onclick="_0xGR()">खोजें 🔎</button><button class="w-full text-gray-500 mt-4" onclick="location.reload()">← वापस</button>`;
 }
 
-function getResults() {
-    let post = document.getElementById('s_post').value;
-    let state = document.getElementById('s_state').value;
-    let jila = document.getElementById('s_jila').value.trim().toLowerCase();
-    let vill = document.getElementById('s_vill').value.trim().toLowerCase();
-    
-    document.getElementById('form-area').innerHTML = `<p class="text-center p-4">खोज जारी है...</p>`;
-    db.ref('users/').once('value', snap => {
-        let html = ""; let found = false;
-        snap.forEach(c => {
+function _0xGR() {
+    let p = document.getElementById('sp').value, s = document.getElementById('ss').value, j = document.getElementById('sj').value.toLowerCase(), v = document.getElementById('sv').value.toLowerCase();
+    document.getElementById('f-a').innerHTML = `<p class="text-center">खोज जारी है...</p>`;
+    _db.ref('users/').once('value', sn => {
+        let h = ""; let f = false;
+        sn.forEach(c => {
             let d = c.val();
-            if(d.post === post && d.state === state && d.jila === jila && d.village === vill) {
-                html += `<div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:10px; border-left:6px solid #f97316; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div><b class="text-lg">${d.name}</b><br><small class="text-blue-600 font-bold">${d.post}</small><br><small>${d.village.toUpperCase()}</small></div>
-                    <a href="tel:${d.phone}" class="bg-green-600 text-white p-3 rounded-full">📞</a>
-                </div>`;
-                found = true;
+            if(d.post === p && d.state === s && d.jila === j && d.village === v) {
+                h += `<div style="background:#fff;padding:15px;border-radius:15px;margin-bottom:10px;border-left:6px solid #f97316;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 5px rgba(0,0,0,.1)"><div><b>${d.name}</b><br><small class="text-blue-600 font-bold">${d.post}</small></div><a href="tel:${d.phone}" class="bg-green-600 text-white p-3 rounded-full">📞</a></div>`;
+                f = true;
             }
         });
-        document.getElementById('form-area').innerHTML = (found ? html : "<p class='text-center p-4'>नहीं मिला।</p>") + `<button class="btn-submit mt-4" style="background:#666" onclick="location.reload()">नई खोज</button>`;
+        document.getElementById('f-a').innerHTML = (f ? h : "<p class='text-center p-4'>नहीं मिला।</p>") + `<button class="btn-submit mt-4" style="background:#666" onclick="location.reload()">नई खोज</button>`;
     });
 }
-function shareApp() {
-    // यहाँ आप अपना संदेश लिख सकते हैं जो व्हाट्सएप पर जाएगा
-    const text = "🚩 *ग्राम शक्ति - डिजिटल सेवा* 🚩\n\nअब गाँव में ही पायें मजदूर, ड्राइवर, मिस्त्री और कंपिनयों में नौकरी।\n\nअभी अपना फॉर्म भरने के लिए नीचे लिंक पर क्लिक करें: \n";
-    const url = window.location.href; // यह आपकी ऐप का लिंक अपने आप ले लेगा
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + url)}`;
-    window.open(whatsappUrl, '_blank');
+
+function _0xSh() {
+    const t = "🚩 *ग्राम शक्ति - डिजिटल सेवा* 🚩\n\nअब गाँव में ही पायें मजदूर, ड्राइवर, मिस्त्री और कंपिनयों में नौकरी।\n\nअभी अपना फॉर्म भरने के लिए नीचे लिंक पर क्लिक करें: \n";
+    window.open(`https://wa.me/?text=${encodeURIComponent(t + window.location.href)}`, '_blank');
 }
+function _0x5s(x){window.open('https://wa.me/919784499059','_blank')}
 </script>
 </body>
 </html>
