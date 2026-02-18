@@ -7,7 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
         .tab-btn.active { border-bottom: 4px solid #ea580c; color: #ea580c; }
     </style>
 </head>
@@ -73,7 +75,7 @@
     </div>
 
 <script>
-// --- एन्क्रिप्टेड क्रेडेंशियल्स ---
+// --- फायरबेस और क्रेडेंशियल्स ---
 const _0x12a = ["AIzaSyCuvev3-jwZwQuO_fHYyv2E2ovLny4Lh8Q", "gram-shakti-b135a.firebaseapp.com", "https://gram-shakti-b135a-default-rtdb.firebaseio.com", "Vikash", "Vikas0627."];
 
 firebase.initializeApp({
@@ -85,7 +87,7 @@ firebase.initializeApp({
 const _db = firebase.database();
 let _cU = null;
 
-// लॉगिन हैंडलर
+// --- लॉगिन फंक्शन ---
 document.getElementById('l-b').addEventListener('click', function() {
     const id = document.getElementById('u-i').value.trim();
     const ps = document.getElementById('u-p').value.trim();
@@ -99,7 +101,7 @@ document.getElementById('l-b').addEventListener('click', function() {
             if(d && d.pass === ps) {
                 _cU = { role: 'district', name: d.name, jila: d.jila.toLowerCase() };
                 _oD();
-            } else { alert("गलत क्रेडेंशियल!"); }
+            } else { alert("गलत ID या पासवर्ड!"); }
         });
     }
 });
@@ -170,43 +172,15 @@ function _lA() {
 
 function _dR(k) { if(confirm("डिलीट करें?")) _db.ref('users/' + k).remove(); }
 function _dA(k) { if(confirm("एडमिन को हटाएं?")) _db.ref('district_admins/' + k).remove(); }
-<script>
-// 1. राइट-क्लिक (Right Click) को पूरी तरह बंद करने के लिए
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-}, false);
 
-// 2. कीबोर्ड के शॉर्टकट्स (Ctrl+U, F12 आदि) को ब्लॉक करने के लिए
+// --- सुरक्षा (Anti-Theft) ---
+document.addEventListener('contextmenu', e => e.preventDefault());
 document.onkeydown = function(e) {
-    // F12 बटन बंद
-    if (event.keyCode == 123) {
-        return false;
-    }
-    // Ctrl+Shift+I (Inspect) बंद
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
-        return false;
-    }
-    // Ctrl+Shift+C (Element Selector) बंद
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
-        return false;
-    }
-    // Ctrl+Shift+J (Console) बंद
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
-        return false;
-    }
-    // Ctrl+U (View Source) को ब्लॉक करने के लिए
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
-        alert("सुरक्षा कारणों से यह ब्लॉक है!");
+    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
         return false;
     }
 };
-
-// 3. कोड को 'Debugger' से सुरक्षित करना
-// अगर कोई फिर भी जबरदस्ती कोड खोलने की कोशिश करेगा तो उसका ब्राउज़र अटक जाएगा
-setInterval(function() {
-    debugger;
-}, 100);
-</script>
+setInterval(function() { debugger; }, 500);
 </script>
 </body>
 </html>
