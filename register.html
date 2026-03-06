@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gram Shakti Register</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="firebase.js"></script>
+</head>
+
+<body>
+
+<h2>Gram Shakti Registration</h2>
+
+<form id="registerForm">
+
+<input type="text" id="name" placeholder="पूरा नाम" required><br><br>
+
+<input type="text" id="mobile" placeholder="मोबाइल नंबर" required><br><br>
+
+<select id="state">
+<option>राजस्थान</option>
+<option>उत्तर प्रदेश</option>
+<option>मध्य प्रदेश</option>
+<option>बिहार</option>
+</select><br><br>
+
+<input type="text" id="district" placeholder="जिला"><br><br>
+
+<input type="text" id="village" placeholder="गांव"><br><br>
+
+<button type="submit">Register</button>
+
+</form>
+
+<script src="script.js"></script>
+
+</body>
+</html>
