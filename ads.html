@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Post Advertisement</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="firebase.js"></script>
+
+</head>
+
+<body>
+
+<h2>Post Advertisement</h2>
+
+<form id="adForm">
+
+<label>Business / Shop Name</label><br>
+<input type="text" id="businessName" required><br><br>
+
+<label>Mobile Number</label><br>
+<input type="text" id="mobile" required><br><br>
+
+<label>Advertisement Title</label><br>
+<input type="text" id="title" required><br><br>
+
+<label>Description</label><br>
+<textarea id="description" required></textarea><br><br>
+
+<label>State</label><br>
+<input type="text" id="state" required><br><br>
+
+<label>District</label><br>
+<input type="text" id="district" required><br><br>
+
+<label>City / Panchayat</label><br>
+<input type="text" id="city" required><br><br>
+
+<label>Village</label><br>
+<input type="text" id="village"><br><br>
+
+<label>Duration</label><br>
+
+<select id="duration">
+
+<option value="7">7 Days</option>
+<option value="15">15 Days</option>
+<option value="30">30 Days</option>
+
+</select>
+
+<br><br>
+
+<button type="submit">Submit Advertisement</button>
+
+</form>
+
+<br>
+
+<h3>Active Advertisements</h3>
+
+<div id="adList"></div>
+
+<script>
+
+var adForm = document.getElementById("adForm");
+
+adForm.addEventListener("submit", function(e){
+
+e.preventDefault();
+
+var businessName = document.getElementById("businessName").value;
+var mobile = document.getElementById("mobile").value;
+var title = document.getElementById("title").value;
+var description = document.getElementById("description").value;
+var state = document.getElementById("state").value;
+var district = document.getElementById("district").value;
+var city = document.getElementById("city").value;
+var village = document.getElementById("village").value;
+var duration = document.getElementById("duration").value;
+
+var adData = {
+
+businessName: businessName,
+mobile: mobile,
+title: title,
+description: description,
+state: state,
+district: district,
+city: city,
+village: village,
+duration: duration,
+time: Date.now()
+
+};
+
+firebase.database().ref("advertisements").push(adData);
+
+alert("Advertisement Submitted");
+
+adForm.reset();
+
+});
+
+var adRef = firebase.database().ref("advertisements");
+
+adRef.on("value", function(snapshot){
+
+var data = snapshot.val();
+
+var html = "";
+
+for(var key in data){
+
+html += "<div style='border:1px solid gray;padding:10px;margin:10px;'>";
+
+html += "<b>Business:</b> " + data[key].businessName + "<br>";
+html += "<b>Title:</b> " + data[key].title + "<br>";
+html += "<b>Description:</b> " + data[key].description + "<br>";
+html += "<b>Location:</b> " + data[key].city + "<br>";
+html += "<b>Mobile:</b> " + data[key].mobile + "<br>";
+
+html += "</div>";
+
+}
+
+document.getElementById("adList").innerHTML = html;
+
+});
+
+</script>
+
+</body>
+
+</html>
