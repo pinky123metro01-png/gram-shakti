@@ -1,42 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Gram Shakti Register</title>
+
 <link rel="stylesheet" href="style.css">
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script src="firebase.js"></script>
+
 </head>
 
 <body>
 
+<div class="register-container">
+
 <h2>Gram Shakti Registration</h2>
 
-<form id="registerForm">
+<input type="text" id="name" placeholder="Full Name">
 
-<input type="text" id="name" placeholder="पूरा नाम" required><br><br>
+<br><br>
 
-<input type="text" id="mobile" placeholder="मोबाइल नंबर" required><br><br>
+<input type="text" id="mobile" placeholder="Mobile Number">
 
-<select id="state">
-<option>राजस्थान</option>
-<option>उत्तर प्रदेश</option>
-<option>मध्य प्रदेश</option>
-<option>बिहार</option>
-</select><br><br>
+<br><br>
 
-<input type="text" id="district" placeholder="जिला"><br><br>
+<select id="userType">
 
-<input type="text" id="village" placeholder="गांव"><br><br>
+<option value="">Select User Type</option>
 
-<button type="submit">Register</button>
+<option value="customer">Customer</option>
 
-</form>
+<option value="worker">Worker</option>
 
-<script src="script.js"></script>
+<option value="company">Company / Business</option>
+
+</select>
+
+<br><br>
+
+<input type="text" id="state" placeholder="State">
+
+<br><br>
+
+<input type="text" id="district" placeholder="District">
+
+<br><br>
+
+<input type="text" id="city" placeholder="City / Panchayat">
+
+<br><br>
+
+<input type="text" id="village" placeholder="Village">
+
+<br><br>
+
+<select id="work">
+
+<option value="">Work Category (Only for Worker)</option>
+
+<option>Driver</option>
+<option>Plumber</option>
+<option>Electrician</option>
+<option>Labor</option>
+<option>Mason</option>
+<option>Carpenter</option>
+<option>Cook</option>
+<option>Cleaner</option>
+<option>Security Guard</option>
+<option>Farmer Worker</option>
+<option>Shop Helper</option>
+
+</select>
+
+<br><br>
+
+<button onclick="registerUser()">Register</button>
+
+</div>
+
+<script>
+
+function registerUser(){
+
+var name = document.getElementById("name").value;
+var mobile = document.getElementById("mobile").value;
+var userType = document.getElementById("userType").value;
+var state = document.getElementById("state").value;
+var district = document.getElementById("district").value;
+var city = document.getElementById("city").value;
+var village = document.getElementById("village").value;
+var work = document.getElementById("work").value;
+
+firebase.database().ref("users/" + mobile).set({
+
+name:name,
+mobile:mobile,
+type:userType,
+state:state,
+district:district,
+city:city,
+village:village,
+work:work
+
+});
+
+alert("Registration Successful");
+
+}
+
+</script>
 
 </body>
+
 </html>
