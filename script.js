@@ -307,3 +307,83 @@ loadCompanies();
 loadAds();
 
 };
+// ===============================
+// SEARCH SYSTEM
+// ===============================
+
+function searchData(){
+
+var search = document.getElementById("searchInput").value.toLowerCase();
+
+var ref = firebase.database().ref("users");
+
+ref.once("value", function(snapshot){
+
+var data = snapshot.val();
+
+var workerHTML = "";
+var companyHTML = "";
+var shopHTML = "";
+
+for(var key in data){
+
+var user = data[key];
+
+var name = (user.name || "").toLowerCase();
+var work = (user.work || "").toLowerCase();
+var city = (user.city || "").toLowerCase();
+
+if(name.includes(search) || work.includes(search) || city.includes(search)){
+
+// WORKERS
+if(user.type == "worker"){
+
+workerHTML += "<div style='border:1px solid gray;padding:10px;margin:10px;'>";
+
+workerHTML += "<b>Name:</b> "+user.name+"<br>";
+workerHTML += "<b>Work:</b> "+user.work+"<br>";
+workerHTML += "<b>City:</b> "+user.city+"<br>";
+workerHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
+
+workerHTML += "</div>";
+
+}
+
+// COMPANY
+if(user.type == "company"){
+
+companyHTML += "<div style='border:1px solid blue;padding:10px;margin:10px;'>";
+
+companyHTML += "<b>Company:</b> "+user.name+"<br>";
+companyHTML += "<b>City:</b> "+user.city+"<br>";
+companyHTML += "<b>Contact:</b> "+user.mobile+"<br>";
+
+companyHTML += "</div>";
+
+}
+
+// SHOP
+if(user.type == "shop"){
+
+shopHTML += "<div style='border:1px solid green;padding:10px;margin:10px;'>";
+
+shopHTML += "<b>Shop:</b> "+user.name+"<br>";
+shopHTML += "<b>Category:</b> "+user.work+"<br>";
+shopHTML += "<b>City:</b> "+user.city+"<br>";
+shopHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
+
+shopHTML += "</div>";
+
+}
+
+}
+
+}
+
+document.getElementById("workerList").innerHTML = workerHTML;
+document.getElementById("companyList").innerHTML = companyHTML;
+document.getElementById("shopList").innerHTML = shopHTML;
+
+});
+
+}
