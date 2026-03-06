@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html>
 
 <head>
@@ -13,42 +13,86 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script src="firebase.js"></script>
-<script src="script.js"></script>
 
 </head>
 
 <body>
 
-<h1>Gram Shakti Register</h1>
+<h2>Register</h2>
 
-<div class="container">
+<input type="text" id="name" placeholder="Name"><br><br>
 
-<input type="text" id="name" placeholder="Full Name">
-
-<input type="number" id="mobile" placeholder="Mobile Number">
+<input type="text" id="mobile" placeholder="Mobile Number"><br><br>
 
 <select id="type">
-<option value="">Select User Type</option>
-<option value="customer">Customer</option>
+
+<option value="">Select Type</option>
+
 <option value="worker">Worker</option>
-<option value="company">Company / Business</option>
+
+<option value="customer">Customer</option>
+
+<option value="business">Shop / Business / School</option>
+
 </select>
 
-<input type="text" id="work" placeholder="Work Category (Driver, Plumber, Shop, etc)">
+<br><br>
 
-<input type="text" id="city" placeholder="City / Panchayat / Village">
+<input type="text" id="work" placeholder="Work / Service">
+
+<br><br>
+
+<input type="text" id="city" placeholder="City / Village">
 
 <br><br>
 
 <button onclick="registerUser()">Register</button>
 
-<br><br>
+<script>
 
-<a href="login.html">
-<button>Login</button>
-</a>
+function registerUser(){
 
-</div>
+var name = document.getElementById("name").value;
+var mobile = document.getElementById("mobile").value;
+var type = document.getElementById("type").value;
+var work = document.getElementById("work").value;
+var city = document.getElementById("city").value;
+
+var id = Date.now();
+
+firebase.database().ref("users/"+id).set({
+
+name:name,
+mobile:mobile,
+type:type,
+work:work,
+city:city
+
+});
+
+alert("Registration Successful");
+
+if(type=="worker"){
+
+window.location="worker.html";
+
+}
+
+if(type=="customer"){
+
+window.location="customer.html";
+
+}
+
+if(type=="business"){
+
+window.location="business.html";
+
+}
+
+}
+
+</script>
 
 </body>
 
