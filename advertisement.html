@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Post Advertisement</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="firebase.js"></script>
+
+</head>
+
+<body>
+
+<h2>Post Advertisement</h2>
+
+<input type="text" id="name" placeholder="Business / Shop Name">
+
+<br><br>
+
+<input type="text" id="type" placeholder="Shop / School / Company / Service">
+
+<br><br>
+
+<input type="text" id="city" placeholder="City / Panchayat">
+
+<br><br>
+
+<textarea id="adText" placeholder="Write your advertisement"></textarea>
+
+<br><br>
+
+<select id="days">
+
+<option value="7">7 Days</option>
+<option value="15">15 Days</option>
+<option value="30">30 Days</option>
+
+</select>
+
+<br><br>
+
+<button onclick="postAd()">Post Advertisement</button>
+
+<script>
+
+function postAd(){
+
+var name = document.getElementById("name").value;
+var type = document.getElementById("type").value;
+var city = document.getElementById("city").value;
+var adText = document.getElementById("adText").value;
+var days = document.getElementById("days").value;
+
+var adData = {
+
+name:name,
+type:type,
+city:city,
+adText:adText,
+days:days
+
+};
+
+firebase.database().ref("advertisements").push(adData);
+
+alert("Advertisement Posted Successfully");
+
+}
+
+</script>
+
+</body>
+
+</html>
