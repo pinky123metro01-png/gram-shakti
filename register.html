@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - Gram Shakti</title>
 
-<title>Gram Shakti Register</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="style.css">
 
@@ -14,108 +13,42 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script src="firebase.js"></script>
+<script src="script.js"></script>
 
 </head>
 
 <body>
 
-<div class="register-container">
+<h1>Gram Shakti Register</h1>
 
-<h2>Gram Shakti Registration</h2>
+<div class="container">
 
 <input type="text" id="name" placeholder="Full Name">
 
-<br><br>
+<input type="number" id="mobile" placeholder="Mobile Number">
 
-<input type="text" id="mobile" placeholder="Mobile Number">
-
-<br><br>
-
-<select id="userType">
-
+<select id="type">
 <option value="">Select User Type</option>
-
 <option value="customer">Customer</option>
-
 <option value="worker">Worker</option>
-
 <option value="company">Company / Business</option>
-
 </select>
 
-<br><br>
+<input type="text" id="work" placeholder="Work Category (Driver, Plumber, Shop, etc)">
 
-<input type="text" id="state" placeholder="State">
-
-<br><br>
-
-<input type="text" id="district" placeholder="District">
-
-<br><br>
-
-<input type="text" id="city" placeholder="City / Panchayat">
-
-<br><br>
-
-<input type="text" id="village" placeholder="Village">
-
-<br><br>
-
-<select id="work">
-
-<option value="">Work Category (Only for Worker)</option>
-
-<option>Driver</option>
-<option>Plumber</option>
-<option>Electrician</option>
-<option>Labor</option>
-<option>Mason</option>
-<option>Carpenter</option>
-<option>Cook</option>
-<option>Cleaner</option>
-<option>Security Guard</option>
-<option>Farmer Worker</option>
-<option>Shop Helper</option>
-
-</select>
+<input type="text" id="city" placeholder="City / Panchayat / Village">
 
 <br><br>
 
 <button onclick="registerUser()">Register</button>
 
+<br><br>
+
+<a href="login.html">
+<button>Login</button>
+</a>
+
 </div>
-
-<script>
-
-function registerUser(){
-
-var name = document.getElementById("name").value;
-var mobile = document.getElementById("mobile").value;
-var userType = document.getElementById("userType").value;
-var state = document.getElementById("state").value;
-var district = document.getElementById("district").value;
-var city = document.getElementById("city").value;
-var village = document.getElementById("village").value;
-var work = document.getElementById("work").value;
-
-firebase.database().ref("users/" + mobile).set({
-
-name:name,
-mobile:mobile,
-type:userType,
-state:state,
-district:district,
-city:city,
-village:village,
-work:work
-
-});
-
-alert("Registration Successful");
-
-}
-
-</script>
 
 </body>
 
