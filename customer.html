@@ -9,6 +9,14 @@
 
 <link rel="stylesheet" href="style.css">
 
+<!-- Firebase -->
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="firebase.js"></script>
+
 </head>
 
 <body>
@@ -16,6 +24,8 @@
 <h2>Customer Dashboard</h2>
 
 <p>Welcome Customer</p>
+
+<hr>
 
 <h3>Find Workers</h3>
 
@@ -46,11 +56,56 @@
 
 </ul>
 
+<hr>
+
+<h3>Your Hire Requests</h3>
+
+<div id="requestStatus"></div>
+
 <br>
 
 <a href="index.html">
 <button>Back to Home</button>
 </a>
+
+<script>
+
+var mobile = localStorage.getItem("mobile");
+
+function loadRequests(){
+
+firebase.database().ref("requests").on("value", function(snapshot){
+
+var data = snapshot.val();
+
+var html = "";
+
+for(var key in data){
+
+if(data[key].customerMobile == mobile){
+
+html += "<div style='border:1px solid gray;padding:10px;margin:10px;'>";
+
+html += "<b>Worker Mobile:</b> "+data[key].workerMobile+"<br>";
+html += "<b>Work:</b> "+data[key].work+"<br>";
+html += "<b>City:</b> "+data[key].city+"<br>";
+html += "<b>Status:</b> "+data[key].status+"<br>";
+
+html += "</div>";
+
+}
+
+}
+
+document.getElementById("requestStatus").innerHTML = html;
+
+});
+
+}
+
+loadRequests();
+
+</script>
 
 </body>
 
