@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Nearby Workers Map - Gram Shakti</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+#map{
+
+height:500px;
+width:100%;
+border-radius:10px;
+
+}
+
+</style>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAP_KEY"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Nearby Workers Map</h1>
+
+<h2>🇮🇳 हिंदी</h2>
+
+<p>
+इस मैप में आप अपने आसपास मौजूद वर्कर देख सकते हैं।
+</p>
+
+<h2>🇬🇧 English</h2>
+
+<p>
+This map shows workers available near your location.
+</p>
+
+<div id="map"></div>
+
+</div>
+
+
+<script>
+
+function initMap(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(function(position){
+
+var lat = position.coords.latitude;
+
+var lng = position.coords.longitude;
+
+var userLocation = {lat:lat, lng:lng};
+
+var map = new google.maps.Map(
+
+document.getElementById("map"),
+
+{
+
+zoom:12,
+
+center:userLocation
+
+}
+
+);
+
+var marker = new google.maps.Marker({
+
+position:userLocation,
+
+map:map,
+
+title:"Your Location"
+
+});
+
+});
+
+}else{
+
+alert("Geolocation not supported");
+
+}
+
+}
+
+window.onload = initMap;
+
+</script>
+
+</body>
+
+</html>
