@@ -4,18 +4,18 @@
 
 function registerUser(){
 
-var name = document.getElementById("name").value;
-var mobile = document.getElementById("mobile").value;
-var type = document.getElementById("type").value;
-var work = document.getElementById("work").value;
-var city = document.getElementById("city").value;
+let name = document.getElementById("name").value;
+let mobile = document.getElementById("mobile").value;
+let type = document.getElementById("type").value;
+let work = document.getElementById("work").value;
+let city = document.getElementById("city").value;
 
 if(name=="" || mobile=="" || type=="" || city==""){
 alert("Please fill all details");
 return;
 }
 
-var id = Date.now();
+let id = Date.now();
 
 firebase.database().ref("users/"+id).set({
 name:name,
@@ -39,15 +39,14 @@ window.location.href="login.html";
 
 function loginUser(){
 
-var mobile = document.getElementById("loginMobile").value;
+let mobile = document.getElementById("loginMobile").value;
 
-firebase.database().ref("users").once("value",function(snapshot){
+firebase.database().ref("users").once("value",(snapshot)=>{
 
-var data = snapshot.val();
+let data = snapshot.val();
+let found = false;
 
-var found = false;
-
-for(var key in data){
+for(let key in data){
 
 if(data[key].mobile == mobile){
 
@@ -64,10 +63,8 @@ window.location.href="index.html";
 
 }
 
-if(found == false){
-
+if(!found){
 alert("User Not Found");
-
 }
 
 });
@@ -77,43 +74,49 @@ alert("User Not Found");
 
 
 // ===============================
-// LOAD WORKERS LIST
+// LOAD WORKERS
 // ===============================
 
 function loadWorkers(){
 
-var workerRef = firebase.database().ref("users");
+let workerBox = document.getElementById("workerList");
 
-workerRef.on("value", function(snapshot){
+if(!workerBox) return;
 
-var data = snapshot.val();
+firebase.database().ref("users").on("value",(snapshot)=>{
 
-var html = "";
+let data = snapshot.val();
+let html="";
 
-for(var key in data){
+for(let key in data){
 
-if(data[key].type == "worker"){
+let user = data[key];
 
-html += "<div style='border:1px solid gray;padding:10px;margin:10px;'>";
+if(user.type=="worker"){
 
-html += "<b>Name:</b> " + data[key].name + "<br>";
-html += "<b>Work:</b> " + data[key].work + "<br>";
-html += "<b>Location:</b> " + data[key].city + "<br>";
-html += "<b>Mobile:</b> " + data[key].mobile + "<br>";
+html += `
+<div class="card">
 
-html += "<button onclick=\"hireWorker('"+data[key].mobile+"','"+data[key].work+"','"+data[key].city+"')\">Hire Worker</button>";
+<b>Name:</b> ${user.name}<br>
 
-html += "</div>";
+<b>Work:</b> ${user.work}<br>
+
+<b>City:</b> ${user.city}<br>
+
+<b>Mobile:</b> ${user.mobile}<br>
+
+<button onclick="hireWorker('${user.mobile}','${user.work}','${user.city}')">
+Hire Worker
+</button>
+
+</div>
+`;
 
 }
 
 }
 
-var workerBox = document.getElementById("workerList");
-
-if(workerBox){
 workerBox.innerHTML = html;
-}
 
 });
 
@@ -122,19 +125,19 @@ workerBox.innerHTML = html;
 
 
 // ===============================
-// HIRE WORKER SYSTEM
+// HIRE WORKER
 // ===============================
 
 function hireWorker(workerMobile,work,city){
 
-var customerMobile = localStorage.getItem("mobile");
+let customerMobile = localStorage.getItem("mobile");
 
 if(!customerMobile){
 alert("Please login first");
 return;
 }
 
-var id = Date.now();
+let id = Date.now();
 
 firebase.database().ref("hire_requests/"+id).set({
 
@@ -153,45 +156,50 @@ alert("Hire Request Sent");
 
 
 // ===============================
-// WORKER REQUEST LIST
+// WORKER REQUESTS
 // ===============================
 
 function loadWorkerRequests(){
 
-var workerMobile = localStorage.getItem("mobile");
+let workerMobile = localStorage.getItem("mobile");
 
-var requestContainer = document.getElementById("requestList");
+let requestContainer = document.getElementById("requestList");
+
+if(!requestContainer) return;
 
 firebase.database().ref("hire_requests").on("value",(snapshot)=>{
 
-var html="";
+let html="";
 
 snapshot.forEach((data)=>{
 
-var req = data.val();
+let req = data.val();
 
 if(req.workerMobile == workerMobile){
 
-html += "<div style='border:1px solid red;padding:10px;margin:10px;'>";
+html += `
+<div class="card">
 
-html += "<b>Customer:</b> "+req.customerMobile+"<br>";
-html += "<b>Work:</b> "+req.work+"<br>";
-html += "<b>City:</b> "+req.city+"<br>";
-html += "<b>Status:</b> "+req.status+"<br>";
+<b>Customer:</b> ${req.customerMobile}<br>
 
-html += "<button onclick=\"acceptRequest('"+data.key+"')\">Accept</button>";
+<b>Work:</b> ${req.work}<br>
 
-html += "<button onclick=\"rejectRequest('"+data.key+"')\">Reject</button>";
+<b>City:</b> ${req.city}<br>
 
-html += "</div>";
+<b>Status:</b> ${req.status}<br>
+
+<button onclick="acceptRequest('${data.key}')">Accept</button>
+
+<button onclick="rejectRequest('${data.key}')">Reject</button>
+
+</div>
+`;
 
 }
 
 });
 
-if(requestContainer){
 requestContainer.innerHTML = html;
-}
 
 });
 
@@ -224,40 +232,43 @@ alert("Request Rejected");
 
 
 // ===============================
-// LOAD CUSTOMERS
+// LOAD COMPANIES
 // ===============================
 
-function loadCustomers(){
+function loadCompanies(){
 
-var ref = firebase.database().ref("users");
+let box = document.getElementById("companyList");
 
-ref.on("value", function(snapshot){
+if(!box) return;
 
-var data = snapshot.val();
+firebase.database().ref("users").on("value",(snapshot)=>{
 
-var html = "";
+let data = snapshot.val();
+let html="";
 
-for(var key in data){
+for(let key in data){
 
-if(data[key].type == "customer"){
+let user=data[key];
 
-html += "<div style='border:1px solid blue;padding:10px;margin:10px;'>";
+if(user.type=="company"){
 
-html += "<b>Name:</b> " + data[key].name + "<br>";
-html += "<b>City:</b> " + data[key].city + "<br>";
-html += "<b>Mobile:</b> " + data[key].mobile + "<br>";
+html += `
+<div class="card company">
 
-html += "</div>";
+<b>Company:</b> ${user.name}<br>
+
+<b>City:</b> ${user.city}<br>
+
+<b>Mobile:</b> ${user.mobile}
+
+</div>
+`;
 
 }
 
 }
 
-var box = document.getElementById("customerList");
-
-if(box){
 box.innerHTML = html;
-}
 
 });
 
@@ -266,40 +277,43 @@ box.innerHTML = html;
 
 
 // ===============================
-// LOAD COMPANIES
+// LOAD CUSTOMERS
 // ===============================
 
-function loadCompanies(){
+function loadCustomers(){
 
-var ref = firebase.database().ref("users");
+let box = document.getElementById("customerList");
 
-ref.on("value", function(snapshot){
+if(!box) return;
 
-var data = snapshot.val();
+firebase.database().ref("users").on("value",(snapshot)=>{
 
-var html = "";
+let data = snapshot.val();
+let html="";
 
-for(var key in data){
+for(let key in data){
 
-if(data[key].type == "company"){
+let user=data[key];
 
-html += "<div style='border:1px solid orange;padding:10px;margin:10px;'>";
+if(user.type=="customer"){
 
-html += "<b>Company:</b> " + data[key].name + "<br>";
-html += "<b>City:</b> " + data[key].city + "<br>";
-html += "<b>Mobile:</b> " + data[key].mobile + "<br>";
+html += `
+<div class="card">
 
-html += "</div>";
+<b>Name:</b> ${user.name}<br>
+
+<b>City:</b> ${user.city}<br>
+
+<b>Mobile:</b> ${user.mobile}
+
+</div>
+`;
 
 }
 
 }
 
-var box = document.getElementById("companyList");
-
-if(box){
 box.innerHTML = html;
-}
 
 });
 
@@ -313,18 +327,18 @@ box.innerHTML = html;
 
 function postAd(){
 
-var businessName = document.getElementById("businessName").value;
-var title = document.getElementById("title").value;
-var description = document.getElementById("description").value;
-var city = document.getElementById("city").value;
-var mobile = document.getElementById("mobile").value;
+let businessName = document.getElementById("businessName").value;
+let title = document.getElementById("title").value;
+let description = document.getElementById("description").value;
+let city = document.getElementById("city").value;
+let mobile = document.getElementById("mobile").value;
 
 if(businessName=="" || title=="" || city=="" || mobile==""){
 alert("Please fill all fields");
 return;
 }
 
-var id = Date.now();
+let id = Date.now();
 
 firebase.database().ref("advertisements/"+id).set({
 
@@ -336,7 +350,7 @@ mobile:mobile
 
 });
 
-alert("Advertisement Posted Successfully");
+alert("Advertisement Posted");
 
 window.location.href="index.html";
 
@@ -345,44 +359,45 @@ window.location.href="index.html";
 
 
 // ===============================
-// LOAD ADVERTISEMENTS
+// LOAD ADS
 // ===============================
 
 function loadAds(){
 
-var adRef = firebase.database().ref("advertisements");
+let adBox = document.getElementById("adsBox");
 
-adRef.on("value", function(snapshot){
+if(!adBox) return;
 
-var data = snapshot.val();
+firebase.database().ref("advertisements").on("value",(snapshot)=>{
 
-var html = "";
+let data = snapshot.val();
+let html="";
 
-for(var key in data){
+for(let key in data){
 
-html += "<div style='border:1px solid green;padding:10px;margin:10px;background:#f5fff5;'>";
+let ad = data[key];
 
-html += "<b>Advertisement</b><br>";
+html += `
+<div class="card shop">
 
-html += "<b>Business:</b> " + data[key].businessName + "<br>";
+<b>Advertisement</b><br>
 
-html += "<b>Title:</b> " + data[key].title + "<br>";
+<b>Business:</b> ${ad.businessName}<br>
 
-html += "<b>Description:</b> " + data[key].description + "<br>";
+<b>Title:</b> ${ad.title}<br>
 
-html += "<b>Location:</b> " + data[key].city + "<br>";
+<b>Description:</b> ${ad.description}<br>
 
-html += "<b>Mobile:</b> " + data[key].mobile + "<br>";
+<b>City:</b> ${ad.city}<br>
 
-html += "</div>";
+<b>Mobile:</b> ${ad.mobile}
+
+</div>
+`;
 
 }
 
-var adBox = document.getElementById("adsBox");
-
-if(adBox){
 adBox.innerHTML = html;
-}
 
 });
 
@@ -391,10 +406,10 @@ adBox.innerHTML = html;
 
 
 // ===============================
-// PAGE LOAD SYSTEM
+// PAGE LOAD
 // ===============================
 
-window.onload = function(){
+window.onload=function(){
 
 loadWorkers();
 loadCustomers();
@@ -402,7 +417,7 @@ loadCompanies();
 loadAds();
 loadWorkerRequests();
 
-};
+}
 
 
 
@@ -412,63 +427,75 @@ loadWorkerRequests();
 
 function searchData(){
 
-var search = document.getElementById("searchInput").value.toLowerCase();
+let search = document.getElementById("searchInput").value.toLowerCase();
 
-var ref = firebase.database().ref("users");
+firebase.database().ref("users").once("value",(snapshot)=>{
 
-ref.once("value", function(snapshot){
+let data = snapshot.val();
 
-var data = snapshot.val();
+let workerHTML="";
+let companyHTML="";
+let shopHTML="";
 
-var workerHTML = "";
-var companyHTML = "";
-var shopHTML = "";
+for(let key in data){
 
-for(var key in data){
+let user=data[key];
 
-var user = data[key];
-
-var name = (user.name || "").toLowerCase();
-var work = (user.work || "").toLowerCase();
-var city = (user.city || "").toLowerCase();
+let name=(user.name||"").toLowerCase();
+let work=(user.work||"").toLowerCase();
+let city=(user.city||"").toLowerCase();
 
 if(name.includes(search) || work.includes(search) || city.includes(search)){
 
-if(user.type == "worker"){
+if(user.type=="worker"){
 
-workerHTML += "<div style='border:1px solid gray;padding:10px;margin:10px;'>";
+workerHTML += `
+<div class="card">
 
-workerHTML += "<b>Name:</b> "+user.name+"<br>";
-workerHTML += "<b>Work:</b> "+user.work+"<br>";
-workerHTML += "<b>City:</b> "+user.city+"<br>";
-workerHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
+<b>Name:</b> ${user.name}<br>
 
-workerHTML += "</div>";
+<b>Work:</b> ${user.work}<br>
 
-}
+<b>City:</b> ${user.city}<br>
 
-if(user.type == "company"){
+<b>Mobile:</b> ${user.mobile}
 
-companyHTML += "<div style='border:1px solid blue;padding:10px;margin:10px;'>";
-
-companyHTML += "<b>Company:</b> "+user.name+"<br>";
-companyHTML += "<b>City:</b> "+user.city+"<br>";
-companyHTML += "<b>Contact:</b> "+user.mobile+"<br>";
-
-companyHTML += "</div>";
+</div>
+`;
 
 }
 
-if(user.type == "shop"){
+if(user.type=="company"){
 
-shopHTML += "<div style='border:1px solid green;padding:10px;margin:10px;'>";
+companyHTML += `
+<div class="card company">
 
-shopHTML += "<b>Shop:</b> "+user.name+"<br>";
-shopHTML += "<b>Category:</b> "+user.work+"<br>";
-shopHTML += "<b>City:</b> "+user.city+"<br>";
-shopHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
+<b>Company:</b> ${user.name}<br>
 
-shopHTML += "</div>";
+<b>City:</b> ${user.city}<br>
+
+<b>Mobile:</b> ${user.mobile}
+
+</div>
+`;
+
+}
+
+if(user.type=="shop"){
+
+shopHTML += `
+<div class="card shop">
+
+<b>Shop:</b> ${user.name}<br>
+
+<b>Category:</b> ${user.work}<br>
+
+<b>City:</b> ${user.city}<br>
+
+<b>Mobile:</b> ${user.mobile}
+
+</div>
+`;
 
 }
 
@@ -476,10 +503,10 @@ shopHTML += "</div>";
 
 }
 
-document.getElementById("workerList").innerHTML = workerHTML;
-document.getElementById("companyList").innerHTML = companyHTML;
-document.getElementById("shopList").innerHTML = shopHTML;
+document.getElementById("workerList").innerHTML=workerHTML;
+document.getElementById("companyList").innerHTML=companyHTML;
+document.getElementById("shopList").innerHTML=shopHTML;
 
 });
 
-  }
+}
