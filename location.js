@@ -1,60 +1,79 @@
-var locationData = {
+<div class="locationBox">
 
-"Rajasthan":{
+<h3>अपनी लोकेशन चुनें</h3>
 
-"Jaipur":[
-"Jaipur City",
-"Chomu",
-"Shahpura",
-"Amer",
-"Phulera"
-],
+<input 
+type="number" 
+id="pincodeInput" 
+placeholder="PIN Code डालें" 
+onkeyup="loadVillages()" 
+maxlength="6"
+>
 
-"Alwar":[
-"Alwar City",
-"Behror",
-"Bansur",
-"Kishangarh Bas"
-],
+<br><br>
 
-"Sikar":[
-"Sikar City",
-"Fatehpur",
-"Lachhmangarh",
-"Neem Ka Thana"
-]
+<select id="villageSelect">
 
-},
+<option value="">पहले PIN Code डालें</option>
 
-"Uttar Pradesh":{
+</select>
 
-"Lucknow":[
-"Lucknow City",
-"Malihabad",
-"Mohanlalganj"
-],
+</div>
 
-"Kanpur":[
-"Kanpur City",
-"Bilhaur",
-"Ghatampur"
-]
 
-},
+<script>
 
-"Madhya Pradesh":{
+/* PIN Code से गाँव लोड */
 
-"Bhopal":[
-"Bhopal City",
-"Berasia"
-],
+async function loadVillages() {
 
-"Indore":[
-"Indore City",
-"Sanwer",
-"Mhow"
-]
+let pin = document.getElementById("pincodeInput").value;
+let villageSelect = document.getElementById("villageSelect");
+
+if(pin.length === 6){
+
+villageSelect.innerHTML = "<option>गाँव लोड हो रहे हैं...</option>";
+
+try{
+
+const response = await fetch("https://api.postalpincode.in/pincode/" + pin);
+
+const data = await response.json();
+
+if(data[0].Status === "Success"){
+
+let villages = data[0].PostOffice;
+
+villageSelect.innerHTML = "<option value=''>अपना गाँव चुनें</option>";
+
+villages.forEach(place => {
+
+let option = document.createElement("option");
+
+option.value = place.Name;
+
+option.text = place.Name + " (" + place.Block + ")";
+
+villageSelect.appendChild(option);
+
+});
+
+}else{
+
+villageSelect.innerHTML = "<option>पिनकोड नहीं मिला</option>";
+
+alert("पिनकोड सही नहीं है");
 
 }
 
-};
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+}
+
+</script>
