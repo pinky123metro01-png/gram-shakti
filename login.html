@@ -11,7 +11,9 @@
 <link rel="stylesheet" href="style.css">
 
 <!-- Firebase -->
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script src="firebase.js"></script>
@@ -20,7 +22,7 @@
 
 <body>
 
-<div class="login-container">
+<div class="container">
 
 <h2>Gram Shakti Login</h2>
 
@@ -28,11 +30,7 @@
 
 <input type="text" id="phone" placeholder="Enter Mobile Number">
 
-<br><br>
-
 <button onclick="sendOTP()">Send OTP</button>
-
-<br><br>
 
 <div id="otpBox" style="display:none;">
 
@@ -40,38 +38,55 @@
 
 <input type="text" id="otp" placeholder="Enter OTP">
 
-<br><br>
-
 <button onclick="verifyOTP()">Verify OTP</button>
 
 </div>
 
 <div id="recaptcha-container"></div>
 
+<br>
+
+<a href="register.html">
+<button class="menuBtn">New User Register</button>
+</a>
+
 </div>
+
 
 <script>
 
 window.onload = function () {
 
 window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-'recaptcha-container',
+"recaptcha-container",
 {
-size: 'normal',
+size: "normal",
 callback: function(response) {}
 }
 );
 
 };
 
-function sendOTP() {
+
+// SEND OTP
+
+function sendOTP(){
 
 var phone = document.getElementById("phone").value;
 
+if(phone.length != 10){
+
+alert("Enter valid mobile number");
+
+return;
+
+}
+
 var appVerifier = window.recaptchaVerifier;
 
-firebase.auth().signInWithPhoneNumber("+91" + phone, appVerifier)
-.then(function (confirmationResult) {
+firebase.auth().signInWithPhoneNumber("+91"+phone, appVerifier)
+
+.then(function (confirmationResult){
 
 window.confirmationResult = confirmationResult;
 
@@ -80,7 +95,8 @@ document.getElementById("otpBox").style.display = "block";
 alert("OTP Sent");
 
 })
-.catch(function (error) {
+
+.catch(function (error){
 
 alert(error.message);
 
@@ -88,21 +104,35 @@ alert(error.message);
 
 }
 
-function verifyOTP() {
+
+
+// VERIFY OTP
+
+function verifyOTP(){
 
 var code = document.getElementById("otp").value;
 
 confirmationResult.confirm(code)
-.then(function (result) {
+
+.then(function (result){
 
 var user = result.user;
 
+var phone = document.getElementById("phone").value;
+
+// save login session
+
+localStorage.setItem("mobile",phone);
+
 alert("Login Successful");
+
+// redirect to home
 
 window.location.href = "index.html";
 
 })
-.catch(function (error) {
+
+.catch(function (error){
 
 alert("Wrong OTP");
 
