@@ -19,7 +19,6 @@
 /* Splash Screen */
 
 #splash{
-
 position:fixed;
 top:0;
 left:0;
@@ -30,7 +29,6 @@ display:flex;
 align-items:center;
 justify-content:center;
 z-index:9999;
-
 }
 
 #splash img{
@@ -56,6 +54,13 @@ text-align:center;
 color:#666;
 }
 
+/* Search */
+
+.searchBox{
+text-align:center;
+margin-top:10px;
+}
+
 .searchBtn{
 background:#2a6df4;
 color:white;
@@ -63,6 +68,8 @@ border:none;
 padding:10px 15px;
 border-radius:6px;
 }
+
+/* Old Menu */
 
 .menu{
 text-align:center;
@@ -79,14 +86,66 @@ color:white;
 font-size:16px;
 }
 
-.card{
+/* NEW BIG BUTTONS */
 
+.bigButtons{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:15px;
+margin-top:20px;
+}
+
+.bigBtn{
+width:90%;
+max-width:350px;
+border:none;
+border-radius:12px;
+overflow:hidden;
+cursor:pointer;
+font-size:20px;
+font-weight:bold;
+}
+
+.bigBtnTop{
+padding:25px;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+.bigBtnBottom{
+background:black;
+color:white;
+padding:6px;
+font-size:13px;
+text-align:center;
+}
+
+/* Button Colors */
+
+.workerBtn .bigBtnTop{
+background:#28a745;
+}
+
+.customerBtn .bigBtnTop{
+background:#ff9800;
+}
+
+.companyBtn .bigBtnTop{
+background:#2196f3;
+}
+
+/* Cards */
+
+.card{
 border:1px solid #ddd;
 padding:10px;
 margin:10px 0;
 border-radius:8px;
 background:white;
-
 }
 
 .company{
@@ -121,9 +180,19 @@ background:#eaffea;
 
 <p class="tagline">India Work • Services • Local Market</p>
 
+
+<!-- SEARCH -->
+
+<div class="searchBox">
+
 <input type="text" id="searchInput" placeholder="Search Worker, Service, City">
 
 <button class="searchBtn" onclick="searchData()">Search</button>
+
+</div>
+
+
+<!-- OLD MENU (रखा गया है) -->
 
 <div class="menu">
 
@@ -140,6 +209,58 @@ background:#eaffea;
 </a>
 
 </div>
+
+
+<!-- NEW BIG BUTTONS -->
+
+<div class="bigButtons">
+
+<a href="worker.html">
+<button class="bigBtn workerBtn">
+
+<div class="bigBtnTop">
+👷 Worker
+</div>
+
+<div class="bigBtnBottom">
+काम खोजें और कमाई करें
+</div>
+
+</button>
+</a>
+
+
+<a href="business.html">
+<button class="bigBtn companyBtn">
+
+<div class="bigBtnTop">
+🏢 Company
+</div>
+
+<div class="bigBtnBottom">
+वर्कर हायर करें
+</div>
+
+</button>
+</a>
+
+
+<a href="customer.html">
+<button class="bigBtn customerBtn">
+
+<div class="bigBtnTop">
+👤 Customer
+</div>
+
+<div class="bigBtnBottom">
+आसपास की सेवाएँ खोजें
+</div>
+
+</button>
+</a>
+
+</div>
+
 
 <hr>
 
@@ -164,7 +285,7 @@ background:#eaffea;
 
 <script>
 
-/* Splash Screen 3 sec */
+/* Splash Screen */
 
 setTimeout(function(){
 
@@ -190,57 +311,37 @@ for(var key in data){
 
 var user = data[key];
 
-
-// WORKERS
-
 if(user.type == "worker"){
 
 workerHTML += "<div class='card'>";
-
 workerHTML += "<b>Name:</b> "+user.name+"<br>";
-
 workerHTML += "<b>Work:</b> "+user.work+"<br>";
-
 workerHTML += "<b>City:</b> "+user.city+"<br>";
-
 workerHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
-
+workerHTML += "<br><a href='tel:"+user.mobile+"'>📞 Call</a>";
 workerHTML += "</div>";
 
 }
 
-
-// COMPANY
-
 if(user.type == "company"){
 
 companyHTML += "<div class='card company'>";
-
 companyHTML += "<b>Company:</b> "+user.name+"<br>";
-
 companyHTML += "<b>City:</b> "+user.city+"<br>";
-
 companyHTML += "<b>Contact:</b> "+user.mobile+"<br>";
-
+companyHTML += "<br><a href='tel:"+user.mobile+"'>📞 Call</a>";
 companyHTML += "</div>";
 
 }
 
-
-// SHOPS
-
 if(user.type == "shop"){
 
 shopHTML += "<div class='card shop'>";
-
 shopHTML += "<b>Shop:</b> "+user.name+"<br>";
-
 shopHTML += "<b>Category:</b> "+user.work+"<br>";
-
 shopHTML += "<b>City:</b> "+user.city+"<br>";
-
 shopHTML += "<b>Mobile:</b> "+user.mobile+"<br>";
-
+shopHTML += "<br><a href='tel:"+user.mobile+"'>📞 Call</a>";
 shopHTML += "</div>";
 
 }
@@ -254,7 +355,7 @@ document.getElementById("shopList").innerHTML = shopHTML;
 });
 
 
-/* Search Function */
+/* Search */
 
 function searchData(){
 
@@ -282,4 +383,4 @@ card.style.display="none";
 
 </body>
 
-                      </html>
+  </html>
